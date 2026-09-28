@@ -78,3 +78,7 @@ venv/
 .vscode/
 .idea/
 .DS_Store
+
+# My timelines
+/warehouse_routing_timeline.md
+/senior_project_report.md
