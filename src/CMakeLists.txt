@@ -3,6 +3,9 @@
 add_library(warehouse_routing_core
   grid.cpp
   graph.cpp
+  map_loader.cpp
+  agent.cpp
+  order.cpp
 )
 
 # Tells the compiler to treat include/ as a search root, so

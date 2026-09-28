@@ -2,6 +2,9 @@
 add_executable(warehouse_routing_tests
 test_grid.cpp
 test_graph.cpp
+test_map_loader.cpp
+test_agent.cpp
+test_order.cpp
 )
 
 #link in warehouse_routing_tests and gtest_main

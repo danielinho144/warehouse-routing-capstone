@@ -1,0 +1,6 @@
+type invalid
+height 2
+width 3
+map
+.T.
+..T
