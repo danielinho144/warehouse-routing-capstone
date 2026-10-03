@@ -1,0 +1,25 @@
+{
+    "map_path": "../warehouses/warehouse-10-20-10-2-1.map",
+    "agents": [
+        {
+            "id": 0,
+            "start": {"row": -1, "col": 1}
+        },
+        {
+            "id": 1,
+            "start": {"row": 1, "col": 2}
+        }
+    ],
+    "orders": [
+        {
+            "id": 0,
+            "pickup": {"row": 2, "col": 3 },
+            "delivery": {"row": 1, "col": 1}
+        },
+        {
+            "id": 1,
+            "pickup": {"row": 3, "col": 3},
+            "delivery": {"row": 1, "col": 1}
+        }
+    ]
+}
