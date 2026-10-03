@@ -5,6 +5,7 @@ test_graph.cpp
 test_map_loader.cpp
 test_agent.cpp
 test_order.cpp
+test_scenario_loader.cpp
 )
 
 #link in warehouse_routing_tests and gtest_main
@@ -12,6 +13,11 @@ test_order.cpp
 target_link_libraries(warehouse_routing_tests PRIVATE
 warehouse_routing_core
 gtest_main
+)
+
+target_compile_definitions(warehouse_routing_tests PRIVATE
+  MAP_TEST_DATA_DIR="${CMAKE_SOURCE_DIR}/data/warehouses/test_cases"
+  SCENARIO_DATA_DIR="${CMAKE_SOURCE_DIR}/data/scenarios"
 )
 
 #load CMake module that provides gtest_discover_tests

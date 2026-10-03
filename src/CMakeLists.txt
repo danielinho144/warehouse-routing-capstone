@@ -6,6 +6,7 @@ add_library(warehouse_routing_core
   map_loader.cpp
   agent.cpp
   order.cpp
+  scenario_loader.cpp
 )
 
 # Tells the compiler to treat include/ as a search root, so
