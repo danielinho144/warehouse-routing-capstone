@@ -6,6 +6,8 @@ test_map_loader.cpp
 test_agent.cpp
 test_order.cpp
 test_scenario_loader.cpp
+test_astar.cpp
+test_independent_planner.cpp
 )
 
 #link in warehouse_routing_tests and gtest_main
