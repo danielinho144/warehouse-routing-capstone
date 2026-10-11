@@ -8,6 +8,9 @@ test_order.cpp
 test_scenario_loader.cpp
 test_astar.cpp
 test_independent_planner.cpp
+test_order_assignment.cpp
+test_simulation.cpp
+test_conflict_detection.cpp
 )
 
 #link in warehouse_routing_tests and gtest_main

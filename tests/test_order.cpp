@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "warehouse_routing/order.h"
+#include <stdexcept>
 
 using namespace warehouse_routing;
 
@@ -12,4 +13,29 @@ TEST(OrderTest, OrderMatch) {
     EXPECT_EQ(order.getDeliveryPosition().row, 7);
     EXPECT_EQ(order.getDeliveryPosition().col, 3);
     EXPECT_EQ(order.getStatus(), OrderStatus::Unclaimed);
+}
+
+TEST(OrderTest, SuccessfulLifeCycle) {
+    Order order(3, Position{1, 1}, Position{7, 3});
+
+    order.markAssigned();
+    EXPECT_EQ(order.getStatus(), OrderStatus::Assigned);
+
+    order.markCompleted();
+    EXPECT_EQ(order.getStatus(), OrderStatus::Completed);
+}
+
+TEST(OrderTest, InvalidTransitions) {
+    Order order(3, Position{1, 1}, Position{7, 3});
+    EXPECT_THROW(order.markCompleted(), std::runtime_error);
+    EXPECT_EQ(order.getStatus(), OrderStatus::Unclaimed);
+
+    order.markAssigned();
+    EXPECT_THROW(order.markAssigned(), std::runtime_error);
+    EXPECT_EQ(order.getStatus(), OrderStatus::Assigned);
+
+    order.markCompleted();
+    EXPECT_THROW(order.markAssigned(), std::runtime_error);
+    EXPECT_THROW(order.markCompleted(), std::runtime_error);
+    EXPECT_EQ(order.getStatus(), OrderStatus::Completed);
 }

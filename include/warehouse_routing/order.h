@@ -27,6 +27,10 @@ namespace warehouse_routing {
 
         OrderStatus getStatus() const;
 
+        void markAssigned();
+
+        void markCompleted();
+
         private:
         int ID_;
         Position pickup_;

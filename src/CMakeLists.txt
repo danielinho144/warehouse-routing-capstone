@@ -9,6 +9,9 @@ add_library(warehouse_routing_core
   scenario_loader.cpp
   astar.cpp
   independent_planner.cpp
+  order_assignment.cpp
+  simulation.cpp
+  conflict_detection.cpp
 )
 
 # Tells the compiler to treat include/ as a search root, so
@@ -22,4 +25,10 @@ target_include_directories(warehouse_routing_core PUBLIC
 # the top level) so grid.cpp/graph.cpp can use it if/when needed.
 target_link_libraries(warehouse_routing_core PUBLIC
   nlohmann_json::nlohmann_json
+)
+
+add_executable(warehouse_sim main.cpp)
+
+target_link_libraries(warehouse_sim PRIVATE
+  warehouse_routing_core
 )
