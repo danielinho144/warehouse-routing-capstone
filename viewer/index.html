@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wayfare · Warehouse replay</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="replay.js" defer></script>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">W</span><div><h1>Wayfare</h1><p>WAREHOUSE REPLAY</p></div></div>
+    <label class="file-button">Open replay<input id="file" type="file" accept=".json,application/json"></label>
+  </header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">INDEPENDENT A* · RECORDED SIMULATION</p><h2>Every move, one tick at a time.</h2><p id="fileInfo">Open a replay.json file or drop it anywhere on this page.</p></div><span id="runState" class="badge">No replay loaded</span></section>
+    <p id="error" role="alert" hidden></p>
+    <section class="metrics" aria-label="Simulation metrics">
+      <div><span>Current tick</span><strong id="tickMetric">—</strong><small id="tickTotal">No recording</small></div>
+      <div><span>Completed orders</span><strong id="ordersMetric">—</strong><small id="ordersTotal">Recorded workload</small></div>
+      <div><span>Throughput</span><strong id="throughputMetric">—</strong><small>orders / simulation tick</small></div>
+      <div><span>Agents</span><strong id="agentsMetric">—</strong><small id="activeMetric">Select an agent to inspect</small></div>
+    </section>
+    <div class="workspace">
+      <section class="map-panel" aria-label="Warehouse map">
+        <div class="panel-heading"><div><h3>Warehouse floor</h3><span id="dimensions">Recorded positions · no interpolated movement</span></div><div class="zoom-controls"><button id="zoomOut" disabled aria-label="Zoom out">−</button><button id="fit" disabled>Fit</button><button id="zoomIn" disabled aria-label="Zoom in">+</button></div></div>
+        <div id="mapViewport" class="map-viewport">
+          <div id="empty" class="empty"><div class="empty-grid" aria-hidden="true">▦</div><h3>Your simulation, in motion.</h3><p>Choose the JSON exported by warehouse_sim.<br>The map, orders, and snapshots stay in your browser.</p></div>
+          <canvas id="map" hidden aria-label="Warehouse cells, order locations, and agent positions"></canvas>
+        </div>
+        <div class="map-footer"><div class="legend"><span><i class="shelf"></i>Shelf</span><span><i class="pickup"></i>Pickup</span><span><i class="delivery"></i>Delivery</span><span><i class="agent"></i>Agent</span></div><span id="cellInfo">Hover over the map for coordinates</span></div>
+      </section>
+      <aside class="agent-panel"><div class="panel-heading"><h3>Agents</h3><button id="clearSelection" disabled>Show all</button></div><p class="aside-note">Select an agent to highlight its recorded trail and current goal.</p><div id="agentList"><p class="no-agents">Agent details appear after loading a replay.</p></div><p class="aside-note">Goal lines show destinations, not planned routes. Pickup markers show all order locations.</p></aside>
+    </div>
+    <section class="playback" aria-label="Playback controls">
+      <div class="timeline-heading"><label for="timeline">Timeline</label><output id="timelineText">Tick — / —</output></div>
+      <input id="timeline" type="range" min="0" max="0" value="0" disabled aria-label="Recorded snapshot">
+      <div class="playback-row"><div class="transport"><button id="restart" disabled aria-label="Return to first snapshot">↤ Start</button><button id="previous" disabled aria-label="Previous snapshot">←</button><button id="play" class="primary" disabled>Play</button><button id="next" disabled aria-label="Next snapshot">→</button></div><div class="preferences"><label for="speed">Speed</label><select id="speed"><option value="5">5 ticks/s</option><option value="20" selected>20 ticks/s</option><option value="60">60 ticks/s</option><option value="120">120 ticks/s</option></select><label class="check"><input id="trail" type="checkbox" checked> Agent trails</label></div></div>
+    </section>
+    <footer>Recorded C++ simulation · one snapshot per step <span>Space: play / pause · Arrow keys: step</span></footer>
+  </main>
+</body>
+</html>

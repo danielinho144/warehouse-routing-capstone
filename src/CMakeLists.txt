@@ -12,6 +12,7 @@ add_library(warehouse_routing_core
   order_assignment.cpp
   simulation.cpp
   conflict_detection.cpp
+  replay_export.cpp
 )
 
 # Tells the compiler to treat include/ as a search root, so
