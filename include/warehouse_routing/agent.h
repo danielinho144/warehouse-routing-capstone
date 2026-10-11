@@ -28,6 +28,14 @@ namespace warehouse_routing {
 
         AgentStatus getStatus() const;
 
+        void moveTo(Position position); // update agent pos
+
+        void assignOrder(int orderID); // store order ID, change from Idle to PickupPending
+
+        void pickUp(); // change PickupPending to Delivering
+
+        void completeDelivery(); // clear ordeID, back to idle
+
         private:
         int ID_;
         Position position_;

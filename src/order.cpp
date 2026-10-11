@@ -1,4 +1,5 @@
 #include "warehouse_routing/order.h"
+#include <stdexcept>
 
 namespace warehouse_routing {
     Order::Order(int ID, Position pickup, Position delivery) {
@@ -26,5 +27,23 @@ namespace warehouse_routing {
     //get status
     OrderStatus Order::getStatus() const {
         return status_;
+    }
+
+    //mark order assigned
+    void Order::markAssigned() {
+        //do stuff
+        if (status_ != OrderStatus::Unclaimed) {
+            throw std::runtime_error("Cannot assign");
+        }
+        status_ = OrderStatus::Assigned;
+    }
+
+    //mark order completed
+    void Order::markCompleted() {
+        //do stuff
+        if (status_ != OrderStatus::Assigned) {
+            throw std::runtime_error("Cannot complete");
+        }
+        status_ = OrderStatus::Completed;
     }
 }
