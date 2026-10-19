@@ -9,6 +9,12 @@
 #include <cstdlib>
 #include <stdexcept>
 
+//coordinate everything and advance time
+/*
+Flow: Choose orders -> Plan Routes -> Propose Moves -> Attempt Detours -> Resolve Conflicts -> Move
+-> Pickup/Deliver -> Advance Tick
+*/
+
 namespace warehouse_routing {
     Simulation::Simulation(const Scenario& scenario)
     : grid_(loadMap(scenario.mapPath)),
@@ -20,7 +26,7 @@ namespace warehouse_routing {
         //assigns orders
         for (Agent& agent : agents_) {
             if (agent.getStatus() == AgentStatus::Idle) {
-                if (assignNearestOrder(graph_, agent, orders_)) {
+                if (assignNearestOrder(graph_, agent, orders_)) { //assign idle agents orders
                     int orderID = agent.getOrderId().value();
 
                     //plan pickup routes
@@ -32,8 +38,8 @@ namespace warehouse_routing {
                             int goalID = graph_.toNodeId(pickup.row, pickup.col);
                             int agentID = agent.getId();
 
-                            paths_[agentID] = aStar(graph_, startID, goalID);
-                            pathProgress_[agentID] = 0;
+                            paths_[agentID] = aStar(graph_, startID, goalID); //agent's route as nodeIDs
+                            pathProgress_[agentID] = 0; //current index within route
                             break;
                         }
                     }
@@ -41,7 +47,7 @@ namespace warehouse_routing {
             }
         }
         //cleaning delivery cells
-        std::set<int> reservedParking;
+        std::set<int> reservedParking; //parking destinations selected for idle agents
         for (const Agent& agent : agents_) {
             if (agent.getStatus() == AgentStatus::Idle && paths_.contains(agent.getId())) {
                 const std::vector<int>& path = paths_.at(agent.getId());
@@ -132,7 +138,7 @@ namespace warehouse_routing {
             int agentID = agent.getId();
             Position position = agent.getPosition();
             int currentID = graph_.toNodeId(position.row, position.col);
-            proposedMoves[agentID] = currentID;
+            proposedMoves[agentID] = currentID; //proposed destination for tick
 
             if (paths_.contains(agentID)) {
                 const std::vector<int>& path = paths_.at(agentID);

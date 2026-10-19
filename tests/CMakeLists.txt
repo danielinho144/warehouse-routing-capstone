@@ -11,6 +11,7 @@ test_independent_planner.cpp
 test_order_assignment.cpp
 test_simulation.cpp
 test_conflict_detection.cpp
+test_constrained_astar.cpp
 )
 
 #link in warehouse_routing_tests and gtest_main
