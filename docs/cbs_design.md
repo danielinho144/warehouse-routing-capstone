@@ -45,6 +45,15 @@
 - Compare ticks in order, checking vertex conflicts before movement conflicts for each tick.
 - Compare agent pairs in ascending ID order.
 
+### Conflict Detection (Week 6)
+
+- findFirstConflict takes the graph and agent paths by agent ID. It returns the earliest Conflict, or std::nullopt if no conflict is found.
+- Agent IDs are sorted before comparing pairs so the result does not depend on unordered_map order.
+- Scan from tick 0 through the final tick of the longest path. Check all vertex conflicts first, then swap and diagonal conflicts during movement to the next tick.
+- The positionAt helper returns the node at a given tick. If an agent's path has ended, it returns the final node so the agent stays at its goal.
+- Only vertex conflicts are checked at the final tick because all agents have finished moving.
+- Empty paths are rejected with std::runtime_error. An empty map or a single nonempty path returns no conflict.
+
 ### Branching
 
 - Create two children.
@@ -87,8 +96,10 @@ The sketches are in [Hand-Worked Examples.pdf](<Hand-Worked Examples.pdf>).
 ## Implementation Status
 
 - Completed structures and constrained A*.
-- 11 constrained A* tests; 106 total tests passing.
-- Full-path conflict scanning and CBS search still planned.
+- Completed full-path conflict scanning for week 6.
+- 11 constrained A* tests and 15 full-path conflict detection tests; 121 total tests passing.
+- Conflict detection tests cover vertex, swap, and diagonal conflicts, goal waiting, empty input, conflict-free paths, and conflict selection order. Each detected conflict is checked for type, agent IDs, start and end nodes, and tick.
+- Constraint tree branching and replanning are next for week 7. Full CBS search is still planned.
 
 ## Limitations and Integration
 
