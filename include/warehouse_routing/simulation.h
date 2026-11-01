@@ -5,7 +5,8 @@
 #include "warehouse_routing/graph.h"
 #include "warehouse_routing/grid.h"
 #include <cstddef>
-
+#include "warehouse_routing/inventory.h"
+#include "warehouse_routing/pickup_task.h"
 
 namespace warehouse_routing {
     class Simulation {
@@ -27,7 +28,9 @@ namespace warehouse_routing {
         std::vector <Agent> agents_;
         std::vector <Order> orders_;
         std::unordered_map <int, std::vector<int>> paths_;
+        std::unordered_map<int, PickupTask> pickUpTasks_;
         std::unordered_map<int, std::size_t> pathProgress_;
         int currentTick_ = 0;
+        std::vector<InventoryCell> inventory_;
     };
 }

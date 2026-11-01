@@ -1,6 +1,8 @@
 #pragma once
 #include <optional>
 #include "warehouse_routing/position.h"
+#include <string>
+#include <vector>
 
 //agent should have
 // ID
@@ -16,9 +18,14 @@ namespace warehouse_routing {
         Delivering
     };
 
+    struct CarriedItem {
+        std::string itemID;
+        int quantity;
+    };
+
     class Agent {
         public:
-        Agent(int ID, Position position);
+        Agent(int ID, Position position, int capacity);
 
         int getId() const;
 
@@ -32,14 +39,31 @@ namespace warehouse_routing {
 
         void assignOrder(int orderID); // store order ID, change from Idle to PickupPending
 
-        void pickUp(); // change PickupPending to Delivering
+        void startDelivery(); // begin delivering a nonempty load
 
-        void completeDelivery(); // clear ordeID, back to idle
+        void completeDelivery(bool needsAnotherTrip); // finish unloading; continue or release order
+
+        const std::vector<CarriedItem>& getCarriedItems() const;
+
+        int getCapacity() const;
+
+        int getCurrentLoad() const;
+
+        int getRemainingCapacity() const;
+
+        void addCarriedItems(std::string itemID, int quantity);
+
+        void removeCarriedItems(std::string itemID, int quantity);
+
+        void releaseOrder();
+
 
         private:
         int ID_;
         Position position_;
         std::optional<int> orderID_;
         AgentStatus status_;
+        std::vector<CarriedItem> carriedItems_;
+        int capacity_;
     };
 }

@@ -1,0 +1,91 @@
+{
+  "map_path": "../warehouses/warehouse-10-20-10-2-1.map",
+  "inventory": [
+    {
+      "item_id": "SKU_A",
+      "quantity": 10,
+      "shelf": {
+        "row": 5,
+        "col": 35
+      },
+      "pickup": {
+        "row": 5,
+        "col": 36
+      }
+    },
+    {
+      "item_id": "SKU_A",
+      "quantity": 5,
+      "shelf": {
+        "row": 5,
+        "col": 57
+      },
+      "pickup": {
+        "row": 5,
+        "col": 58
+      }
+    },
+    {
+      "item_id": "SKU_B",
+      "quantity": 8,
+      "shelf": {
+        "row": 5,
+        "col": 79
+      },
+      "pickup": {
+        "row": 5,
+        "col": 80
+      }
+    }
+  ],
+  "agents": [
+    {
+      "id": 0,
+      "start": {
+        "row": 1,
+        "col": 1
+      },
+      "capacity": 5
+    },
+    {
+      "id": 1,
+      "start": {
+        "row": 1,
+        "col": 2
+      },
+      "capacity": 5
+    }
+  ],
+  "orders": [
+    {
+      "id": 0,
+      "delivery": {
+        "row": 1,
+        "col": 1
+      },
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_B",
+          "quantity": 2
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "delivery": {
+        "row": 1,
+        "col": 1
+      },
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 1
+        }
+      ]
+    }
+  ]
+}

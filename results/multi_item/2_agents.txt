@@ -1,0 +1,33 @@
+Progress: tick 100/5000 | Completed orders: 0/20
+Progress: tick 200/5000 | Completed orders: 0/20
+Progress: tick 300/5000 | Completed orders: 1/20
+Progress: tick 400/5000 | Completed orders: 2/20
+Progress: tick 500/5000 | Completed orders: 3/20
+Progress: tick 600/5000 | Completed orders: 3/20
+Progress: tick 700/5000 | Completed orders: 3/20
+Progress: tick 800/5000 | Completed orders: 4/20
+Progress: tick 900/5000 | Completed orders: 6/20
+Progress: tick 1000/5000 | Completed orders: 7/20
+Progress: tick 1100/5000 | Completed orders: 8/20
+Progress: tick 1200/5000 | Completed orders: 8/20
+Progress: tick 1300/5000 | Completed orders: 10/20
+Progress: tick 1400/5000 | Completed orders: 12/20
+Progress: tick 1500/5000 | Completed orders: 12/20
+Progress: tick 1600/5000 | Completed orders: 13/20
+Progress: tick 1700/5000 | Completed orders: 14/20
+Progress: tick 1800/5000 | Completed orders: 15/20
+Progress: tick 1900/5000 | Completed orders: 15/20
+Progress: tick 2000/5000 | Completed orders: 16/20
+Progress: tick 2100/5000 | Completed orders: 16/20
+Progress: tick 2200/5000 | Completed orders: 17/20
+Progress: tick 2300/5000 | Completed orders: 18/20
+Progress: tick 2400/5000 | Completed orders: 19/20
+Ticks: 2463
+Completed orders: 20
+Unfinished orders: 0
+Active orders: 0
+Throughput: 0.00812018 orders/tick
+Run finished: true
+All orders completed: true
+Agent 0: (28, 10)
+Agent 1: (30, 10)

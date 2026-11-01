@@ -1,0 +1,37 @@
+{
+  "map_path": "../../warehouses/test_cases/test_layout_small.txt",
+  "agents": [],
+  "inventory": [
+    {
+      "item_id": "SKU_A",
+      "quantity": 1,
+      "shelf": {
+        "row": 0,
+        "col": 1
+      },
+      "pickup": {
+        "row": 0,
+        "col": 0
+      }
+    }
+  ],
+  "orders": [
+    {
+      "id": 0,
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 5
+        },
+        {
+          "item_id": "MISSING_SKU",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 1,
+        "col": 0
+      }
+    }
+  ]
+}
