@@ -1,5 +1,7 @@
 # Independent A* baseline results
 
+These are historical single-pickup results from October 11, 2026. The experiment scenario files have since been migrated to multi-item orders, so the commands below no longer reproduce this older workload. See [multi-item baseline results](multi_item_baseline_results.md) for the October 31 runs and the 10-agent deadlock observation. The original results and notes are retained below.
+
 ## Experiment setup
 
 October 11, 2026 Results:

@@ -1,0 +1,31 @@
+{
+  "map_path": "../../warehouses/test_cases/test_layout_small.txt",
+  "inventory": [
+    {
+      "item_id": "SKU_A",
+      "quantity": 10,
+      "shelf": {
+        "row": 0,
+        "col": 1
+      },
+      "pickup": {
+        "row": 0,
+        "col": 0
+      }
+    },
+    {
+      "item_id": "SKU_B",
+      "quantity": 10,
+      "shelf": {
+        "row": 0,
+        "col": 1
+      },
+      "pickup": {
+        "row": 0,
+        "col": 0
+      }
+    }
+  ],
+  "agents": [],
+  "orders": []
+}

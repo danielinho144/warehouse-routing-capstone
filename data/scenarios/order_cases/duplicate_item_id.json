@@ -1,0 +1,23 @@
+{
+  "map_path": "../../warehouses/test_cases/test_layout_small.txt",
+  "agents": [],
+  "orders": [
+    {
+      "id": 0,
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 1
+        },
+        {
+          "item_id": "SKU_A",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 1,
+        "col": 0
+      }
+    }
+  ]
+}
