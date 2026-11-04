@@ -26,6 +26,9 @@ class Graph {
     int rowOf(int nodeId) const;
     int colOf(int nodeId) const;
 
+    //helper for bounds
+    bool isInBounds(int row, int col) const;
+
     private:
     int rows_;
     int cols_;

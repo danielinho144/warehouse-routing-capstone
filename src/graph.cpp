@@ -66,4 +66,11 @@ namespace warehouse_routing {
     int Graph::colOf(int nodeId) const {
         return nodeId % cols_;
     }
+
+    bool Graph::isInBounds(int row, int col) const {
+        if (row >= 0 && col >= 0 && row < rows_ && col < cols_) {
+            return true;
+        }
+        return false;
+    }
 }
