@@ -1,8 +1,10 @@
 # CBS Design
 
+Status as of November 2, 2026: Week 7 fixed-goal CBS search is complete. Warehouse simulation integration is next for Week 8. The latest combined build passed 253 tests, including 22 CBS tests.
+
 ## Purpose
 
-- Conflict-Based Search will allow agents to coordinate in order to prevent vertex, swap, and diagonal conflicts.
+- Conflict-Based Search coordinates fixed-goal agent routes to prevent vertex, swap, and diagonal conflicts. It is not yet used by the warehouse simulation.
 - The independent A* implementation plans each agent's route separately and handles conflicts during the simulation. CBS will detect the conflicts in the planned paths, add restrictions, and replan the affected agents before movement occurs.
 - The project will compare how these approaches affect warehouse order throughput.
 
@@ -20,6 +22,19 @@
 
 - This represents one complete proposed plan for all agents. It stores a list of constraints, agent paths by agent ID, and total cost. Cost is the sum of each path's number of moves and waits which is calculated as path.size() - 1. Each child node will take its parent's constraints and paths, add a constraint, and replan the affected agent.
 
+### CBSQueueEntry
+
+- Stores a CBSNode and its insertion order. The priority queue selects lower cost first, then earlier insertion order when costs tie.
+
+## Solver Interface
+
+- planCBSPaths takes the graph, agents, goal node IDs by agent ID, maxTick, and maxExpandedNodes.
+- maxTick must be nonnegative and maxExpandedNodes must be positive.
+- Agent IDs must be unique and every agent must have a goal. Start coordinates must be in bounds, and start and goal nodes must exist in the graph.
+- Invalid input throws std::invalid_argument.
+- Success returns an optional containing paths by agent ID. No agents returns a successful empty map.
+- std::nullopt means no plan was returned within the search limits. It does not distinguish exhausted search from a limit being reached.
+
 ## Time and Movement Rules
 
 - Planning starts at tick 0.
@@ -31,12 +46,14 @@
 - Agents can move horizontally, vertically, or diagonally between free cells, without cutting blocked corners.
 - A goal is accepted only if remaining there respects future constraints.
 
-## Planned Constraint Tree
+## Implemented Constraint Tree
 
 ### Root Node
 
-- Plan each agent's initial path without constraints.
+- Plan each agent's initial path using constrained A* without constraints.
 - Store all paths and their combined cost in root node.
+- Return std::nullopt if any root path is empty.
+- A conflict-free root returns immediately. Otherwise, put it into the priority queue.
 
 ### Conflict Selection
 
@@ -59,23 +76,30 @@
 - Create two children.
 - Each child restricts one of the conflicting agents.
 - Children retain their parent's constraints.
+- A vertex conflict adds a vertex constraint for the selected agent at the occupancy tick.
+- A swap or diagonal conflict adds an edge constraint using that agent's start and end nodes at the departure tick.
+- Both children start from separate copies of the same parent.
 
 ### Replanning
 
 - Replan only the newly constrained agent in each child.
 - Discard a child if no path is found within maxTick.
+- Replanning starts from the agent's original start node, not its position at the conflict.
+- Keep the other agents' paths unchanged. Replace the affected path and update total cost by subtracting its old cost and adding the new cost.
+- Enqueue the valid child with the next insertion number. New conflicts are checked when that child is selected.
 
 ### Node Selection
 
 - Cost is the sum of each path's size minus one.
 - Select the lowest-cost node.
-- Planned tie-break: insertion order.
+- Tie-break: insertion order.
 - Create the child constraining the lower-ID agent first.
 
 ### Stopping Conditions
 
 - Success: the selected node's paths have no conflicts.
-- Failure: no candidate nodes remain within the search limits.
+- Return std::nullopt if no candidates remain or maxExpandedNodes is reached.
+- expandedNodes increases when a queue entry is removed and examined, not when children are added. The current conflict-free root shortcut returns before this counter is used.
 
 ## Hand-Worked Examples
 
@@ -97,11 +121,30 @@ The sketches are in [Hand-Worked Examples.pdf](<Hand-Worked Examples.pdf>).
 
 - Completed structures and constrained A*.
 - Completed full-path conflict scanning for week 6.
-- 11 constrained A* tests and 15 full-path conflict detection tests; 121 total tests passing.
+- Completed fixed-goal CBS root planning, node selection, two-child branching, constrained replanning, cost updates, and search limits.
+- Added Graph::isInBounds to validate coordinates before converting them to node IDs.
+- 11 constrained A* tests, 15 full-path conflict detection tests, and 22 CBS tests. The latest full combined test run passed all 253 tests.
 - Conflict detection tests cover vertex, swap, and diagonal conflicts, goal waiting, empty input, conflict-free paths, and conflict selection order. Each detected conflict is checked for type, agent IDs, start and end nodes, and tick.
-- Constraint tree branching and replanning are next for week 7. Full CBS search is still planned.
+- CBS tests cover vertex, swap, and diagonal resolution; small-case minimum costs; goal waiting; blocked corners; deterministic ties; empty input; invalid inputs; unreachable goals; and search limits. These are targeted checks, not a proof for every warehouse scenario.
+- Multi-item inventory, capacity, repeated trips, shortage handling, and baseline experiments are implemented separately. CBS has not yet been connected to those simulation tasks.
 
 ## Limitations and Integration
 
 - Failure within maxTick does not prove no longer path exists.
-- CBS will plan routes to pickup and delivery locations as assignments change. Shared delivery cells require coordination so agents do not remain there and block others.
+- Reaching maxExpandedNodes does not prove the problem has no solution.
+- Agents remain at their goals, so two agents cannot have the same permanent goal in a conflict-free plan. Adding a delivery zone alone does not remove the need to choose destinations and clear them after unloading.
+- The current optional result does not report whether failure came from root planning, exhausted candidates, or the expansion limit.
+- Simulation integration must define goals for pickup, delivery, and idle agents, handle planned waits, and replan when tasks change.
+- Existing simulation path progress advances on movement. CBS paths can contain waits, so execution must advance the path index for an executed wait too.
+- Search failure during simulation must have an explicit handling policy. Do not present a fallback baseline route as a CBS solution.
+
+## Week 8 Next Steps
+
+1. Add a baseline/CBS planner choice without changing fulfillment rules.
+2. Define shared pickup and delivery access, clearing, and idle parking goals.
+3. Supply current positions and goals for all agents and execute coordinated paths, including waits.
+4. Replan on task changes with a fresh planning tick 0 and consistent search limits.
+5. Test small warehouse runs before comparing the five multi-item scenarios.
+6. Export the state needed for the new JavaScript visualization after simulation behavior is stable.
+
+The [multi-item baseline](multi_item_baseline_results.md) completed all 20 orders with 2–8 agents. The 10-agent run completed 8 orders and stopped moving after tick 384 before reaching the 5,000-tick limit. This apparent pickup-aisle congestion deadlock remains a baseline result for comparison, not a guarantee that CBS will resolve it.
