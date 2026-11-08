@@ -17,7 +17,7 @@ namespace warehouse_routing {
     std::string map;
 
 
-    // Next: read the header, create the Grid, and fill its cells.
+    //read the header, create the grid, and fill its cells
     if (!(file >> label >> type)) {
         //reading failed
         throw std::runtime_error("Reading failed");

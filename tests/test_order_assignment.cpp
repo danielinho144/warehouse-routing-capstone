@@ -3,28 +3,12 @@
 
 using namespace warehouse_routing;
 
-// namespace {
-// 
-// // Shelf cells are blocked; every inventory pickup is in a neighboring aisle.
-// Grid warehouseGrid() {
-//     Grid grid(6, 6);
-//     grid.setCellType(1, 1, CellType::Shelf);
-//     grid.setCellType(1, 4, CellType::Shelf);
-//     grid.setCellType(4, 4, CellType::Shelf);
-//     return grid;
-// }
-// 
-// }
-// 
-
 TEST(OrderAssignmentTest, ChoosesNearestStockedItemAcrossAllOrderLines) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(3, Position{0, 0});
     Agent agent(3, Position{0, 0}, 5);
     std::vector<Order> orders{
         Order(10, {{"FAR", 1}}, Position{5, 5}),
@@ -45,13 +29,11 @@ TEST(OrderAssignmentTest, ChoosesNearestStockedItemAcrossAllOrderLines) {
 }
 
 TEST(OrderAssignmentTest, EqualDistanceChoosesLowerOrderID) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(3, Position{0, 0});
     Agent agent(3, Position{0, 0}, 5);
     std::vector<Order> orders{
         Order(20, {{"SKU_A", 1}}, Position{5, 5}),
@@ -68,13 +50,11 @@ TEST(OrderAssignmentTest, EqualDistanceChoosesLowerOrderID) {
 }
 
 TEST(OrderAssignmentTest, SearchesAllLocationsForTheSameItem) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(3, Position{0, 0});
     Agent agent(3, Position{0, 0}, 5);
     std::vector<Order> orders{
         Order(10, {{"SKU_B", 1}}, Position{5, 5}),
@@ -91,13 +71,11 @@ TEST(OrderAssignmentTest, SearchesAllLocationsForTheSameItem) {
 }
 
 TEST(OrderAssignmentTest, ZeroCostPickupIsValidAndBeatsPositiveCost) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(3, Position{0, 1});
     Agent agent(3, Position{0, 1}, 5);
     std::vector<Order> orders{
         Order(10, {{"FAR", 1}}, Position{5, 5}),
@@ -113,7 +91,6 @@ TEST(OrderAssignmentTest, ZeroCostPickupIsValidAndBeatsPositiveCost) {
 }
 
 TEST(OrderAssignmentTest, BusyAgentsAreNotReassigned) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
@@ -124,10 +101,8 @@ TEST(OrderAssignmentTest, BusyAgentsAreNotReassigned) {
     };
     for (bool delivering : {false, true}) {
         SCOPED_TRACE(delivering);
-//         Agent agent(3, Position{0, 0});
         Agent agent(3, Position{0, 0}, 5);
         agent.assignOrder(99);
-//         if (delivering) agent.pickUp();
         if (delivering) {
             agent.addCarriedItems("SKU_A", 1);
             agent.startDelivery();
@@ -142,13 +117,11 @@ TEST(OrderAssignmentTest, BusyAgentsAreNotReassigned) {
 }
 
 TEST(OrderAssignmentTest, NoOrdersAvailableLeavesAgentIdle) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(1, Position{0, 0});
     Agent agent(1, Position{0, 0}, 5);
     std::vector<Order> orders;
     const std::vector<InventoryCell> inventory{
@@ -160,13 +133,11 @@ TEST(OrderAssignmentTest, NoOrdersAvailableLeavesAgentIdle) {
 }
 
 TEST(OrderAssignmentTest, SkipsEmptyStockAndUnrelatedItems) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(1, Position{0, 0});
     Agent agent(1, Position{0, 0}, 5);
     std::vector<Order> orders{
         Order(10, {{"EMPTY", 1}}, Position{5, 5}),
@@ -183,7 +154,6 @@ TEST(OrderAssignmentTest, SkipsEmptyStockAndUnrelatedItems) {
 }
 
 TEST(OrderAssignmentTest, NoMatchingStockLeavesOrderUnclaimed) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
@@ -191,7 +161,6 @@ TEST(OrderAssignmentTest, NoMatchingStockLeavesOrderUnclaimed) {
     Graph graph(grid);
     for (int mode : {0, 1, 2}) {
         SCOPED_TRACE(mode);
-//         Agent agent(1, Position{0, 0});
         Agent agent(1, Position{0, 0}, 5);
         std::vector<Order> orders{Order(10, {{"SKU_A", 1}}, Position{5, 5})};
         std::vector<InventoryCell> inventory;
@@ -205,14 +174,12 @@ TEST(OrderAssignmentTest, NoMatchingStockLeavesOrderUnclaimed) {
 }
 
 TEST(OrderAssignmentTest, UnreachableStockIsSkippedForReachableAlternative) {
-    //Grid grid = warehouseGrid();
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     for (int col = 0; col < grid.getCols(); ++col) grid.setCellType(2, col, CellType::Shelf);
     const Graph graph(grid);
-//     Agent agent(1, Position{0, 0});
     Agent agent(1, Position{0, 0}, 5);
     std::vector<Order> orders{Order(10, {{"SKU_A", 1}}, Position{0, 5})};
     std::vector<InventoryCell> inventory{
@@ -229,13 +196,11 @@ TEST(OrderAssignmentTest, UnreachableStockIsSkippedForReachableAlternative) {
 }
 
 TEST(OrderAssignmentTest, SkipsAssignedCompletedAndUnfinishedOrders) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(1, Position{0, 0});
     Agent agent(1, Position{0, 0}, 5);
     std::vector<Order> orders{
         Order(10, {{"SKU_A", 1}}, Position{5, 5}),
@@ -261,13 +226,11 @@ TEST(OrderAssignmentTest, SkipsAssignedCompletedAndUnfinishedOrders) {
 }
 
 TEST(OrderAssignmentTest, PartialAvailabilityStillAllowsAssignmentWithoutChangingStock) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent(1, Position{0, 0});
     Agent agent(1, Position{0, 0}, 5);
     std::vector<Order> orders{
         Order(10, {{"SKU_A", 5}, {"MISSING", 2}}, Position{5, 5})
@@ -282,14 +245,11 @@ TEST(OrderAssignmentTest, PartialAvailabilityStillAllowsAssignmentWithoutChangin
 }
 
 TEST(OrderAssignmentTest, MultipleAgentsCanTargetSameStockWithoutReservations) {
-    //const Graph graph(warehouseGrid());
     Grid grid(6, 6);
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 4, CellType::Shelf);
     grid.setCellType(4, 4, CellType::Shelf);
     Graph graph(grid);
-//     Agent first(1, Position{0, 0});
-//     Agent second(2, Position{0, 2});
     Agent first(1, Position{0, 0}, 5);
     Agent second(2, Position{0, 2}, 5);
     std::vector<Order> orders{

@@ -4,7 +4,7 @@
 
 namespace warehouse_routing {
     //contents of one storage cell
-    //different cells can hold same itemID, allows agent to find different fullfillment location
+    //different cells can hold same itemID, allows agent to find different fulfillment location
     class InventoryCell {
         public:
             InventoryCell(std::string itemID, 

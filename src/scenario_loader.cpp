@@ -23,7 +23,7 @@ namespace warehouse_routing {
         
         std::filesystem::path scenarioPath(filePath); //create path from scenario filename
         std::filesystem::path mapPath = scenarioPath.parent_path() / scenario.mapPath; //get folder containing file and join path
-        scenario.mapPath = mapPath.lexically_normal().string(); //simplify pieces into warehouses
+        scenario.mapPath = mapPath.lexically_normal().string(); //simplify path components like . and ..
         Grid grid = loadMap(scenario.mapPath); // load warehouse to check positions against it
 
         std::set<int> agentIds;
@@ -101,11 +101,7 @@ namespace warehouse_routing {
                 throw std::runtime_error("Duplicate order ID");
             orderIds.insert(id); //record ID
 
-            //int pickup_row = entry.at("pickup").at("row").get<int>();
-            //int pickup_col = entry.at("pickup").at("col").get<int>();
 
-            //if (!grid.isFree(pickup_row, pickup_col)) //make sure pickup position is valid
-                //throw std::runtime_error("Order pickup must be on free cell");
             std::vector<OrderLine> lines;
 
             if (!entry.at("lines").is_array()) {

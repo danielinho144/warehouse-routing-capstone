@@ -6,7 +6,7 @@
 namespace warehouse_routing {
 
     //build grid of given size, every cell is Free
-    //Shelf and stations get added after
+    //shelves get added after
     Grid::Grid(int rows, int cols) {
         rows_ = rows;
         cols_ = cols;
@@ -33,14 +33,13 @@ namespace warehouse_routing {
     }
 
     //convenience check on top of getCellType
-    //check if cell == Free
+    //check bounds before checking if cell is Free
     bool Grid::isFree(int row, int col) const {
-        //return getCellType(row,col) == CellType::Free;
         return isInBounds(row, col) && getCellType(row, col) == CellType::Free;
     }
 
     //write CellType at given position
-    //will be used to make shelves/pickstations when building warehouse layout
+    //set the cell type when building the warehouse layout
     void Grid::setCellType(int row, int col, CellType type) {
         if (!isInBounds(row, col))
             throw std::out_of_range("Grid: position out of bounds");

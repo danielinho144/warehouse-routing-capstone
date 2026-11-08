@@ -4,10 +4,11 @@
 #include <string>
 #include <vector>
 
-//agent should have
+//agent stores
 // ID
 // Current Position
 // Assigned Order ID or None
+// Capacity and carried items
 // Status: idle, heading to pickup, delivering
 
 namespace warehouse_routing {

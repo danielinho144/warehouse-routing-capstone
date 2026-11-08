@@ -11,8 +11,6 @@ TEST(IndependentPlannerTest, ValidGoals) {
     Grid grid(3, 3);
     Graph graph(grid);
 
-//     Agent agent1(3, Position{0, 0});
-//     Agent agent2(7, Position{2, 2});
     Agent agent1(3, Position{0, 0}, 5);
     Agent agent2(7, Position{2, 2}, 5);
 
@@ -39,7 +37,6 @@ TEST(IndependentPlannerTest, MissingGoal) {
     Grid grid(3, 3);
     Graph graph(grid);
     std::unordered_map<int, int> goals;
-//     Agent agent(3, Position{0, 0});
     Agent agent(3, Position{0, 0}, 5);
     std::vector<Agent> agents{agent};
     EXPECT_THROW(planIndependentPaths(graph, agents, goals), std::runtime_error);
@@ -51,8 +48,6 @@ TEST(IndependentPlannerTest, UnreachableGoal) {
     grid.setCellType(1, 1, CellType::Shelf);
     grid.setCellType(1, 2, CellType::Shelf);
     Graph graph(grid);
-//     Agent agent1(3, Position{0, 0});
-//     Agent agent2(7, Position{2, 0});
     Agent agent1(3, Position{0, 0}, 5);
     Agent agent2(7, Position{2, 0}, 5);
     std::vector<Agent> agents{agent1, agent2};
@@ -79,7 +74,6 @@ TEST(IndependentPlannerTest, NoAgents) {
 }
 
 TEST(IndependentPlannerTest, PlansWarehouseScenario) {
-//     Scenario scenario = loadScenario(SCENARIO_DATA_DIR "/scenario_2_agents.json");
     Scenario scenario = loadScenario(SCENARIO_DATA_DIR "/test_scenario_inventory.json");
     Grid grid = loadMap(scenario.mapPath);
     Graph graph(grid);
@@ -89,7 +83,6 @@ TEST(IndependentPlannerTest, PlansWarehouseScenario) {
 
     for (std::size_t i = 0; i < scenario.agents.size(); i++) {
         int agentID = scenario.agents.at(i).getId();
-//         Position pickup = scenario.orders.at(i).getPickupPosition();
         Position pickup = scenario.inventory.at(i).getPickupPosition();
         goals[agentID] = graph.toNodeId(pickup.row, pickup.col);
     }
@@ -121,5 +114,4 @@ TEST(IndependentPlannerTest, PlansWarehouseScenario) {
         EXPECT_TRUE(found);
         }
     }
-// }
 }

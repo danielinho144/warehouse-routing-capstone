@@ -11,7 +11,6 @@ using namespace warehouse_routing;
 
 TEST(SimulationTest, SmallScenarioCompletesSharedDeliveries) {
     const std::string directory = SCENARIO_DATA_DIR;
-//     const Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     Scenario reference = loadScenario(directory + "/test_scenario_inventory.json");
     reference.orders = {
         Order(0, {{"SKU_A", 1}}, Position{1, 4}),
@@ -27,8 +26,6 @@ TEST(SimulationTest, SmallScenarioCompletesSharedDeliveries) {
 
     EXPECT_TRUE(sim.isFinished());
     EXPECT_EQ(sim.getCompletedOrderCount(), 2);
-//     EXPECT_EQ(sim.getCurrentTick(), 5);
-//     EXPECT_DOUBLE_EQ(sim.getThroughput(), 0.4);
     EXPECT_LT(sim.getCurrentTick(), 100);
     EXPECT_DOUBLE_EQ(sim.getThroughput(), 2.0 / sim.getCurrentTick());
     ASSERT_EQ(sim.getAgents().size(), 2);
@@ -58,7 +55,6 @@ TEST(SimulationTest, SmallScenario) {
 
 TEST(SimulationTest, StepTest) {
     const std::string directory = SCENARIO_DATA_DIR;
-//     const Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     const Scenario reference = loadScenario(directory + "/test_scenario_inventory.json");
     Simulation sim(reference);
 
@@ -75,8 +71,6 @@ TEST(SimulationTest, StepTest) {
     EXPECT_EQ(sim.getAgents().at(0).getPosition().row, 1);
     EXPECT_EQ(sim.getAgents().at(0).getPosition().col, 2);
 
-//     EXPECT_EQ(sim.getAgents().at(1).getPosition().row, 2);
-//     EXPECT_EQ(sim.getAgents().at(1).getPosition().col, 2);
     EXPECT_EQ(sim.getAgents().at(1).getPosition().row, 1);
     EXPECT_EQ(sim.getAgents().at(1).getPosition().col, 3);
 
@@ -92,14 +86,10 @@ TEST(SimulationTest, VertexConflictGivesLowerIdPriority) {
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
 
     reference.agents = {
-//         Agent(20, Position{1, 1}),
-//         Agent(10, Position{1, 3})
         Agent(20, Position{1, 1}, 5),
         Agent(10, Position{1, 3}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{1, 4}),
-//         Order(1, Position{1, 2}, Position{1, 4})
         Order(0, {{"SKU_1_2", 1}}, Position{1, 4}),
         Order(1, {{"SKU_1_2", 1}}, Position{1, 4})
     };
@@ -130,24 +120,20 @@ TEST(SimulationTest, VertexConflictGivesLowerIdPriority) {
 }
 
 TEST(SimulationTest, WaitingPropagatesToFollowingAgent) {
-    Scenario reference = loadScenario(SCENARIO_DATA_DIR "/test_scenario_small.json");
+    Scenario reference;
+    reference.mapPath = MAP_TEST_DATA_DIR "/corridor_inventory.map";
     reference.agents = {
-//         Agent(10, Position{1, 1}),
-//         Agent(20, Position{1, 2}),
-//         Agent(30, Position{1, 3})
-        Agent(10, Position{1, 1}, 5),
-        Agent(20, Position{1, 2}, 5),
-        Agent(30, Position{1, 3}, 5)
+        Agent(10, Position{0, 0}, 5),
+        Agent(20, Position{0, 1}, 5),
+        Agent(30, Position{0, 2}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{5, 5}),
-//         Order(1, Position{1, 3}, Position{5, 5})
-        Order(0, {{"SKU_1_2", 1}}, Position{5, 5}),
-        Order(1, {{"SKU_1_3", 1}}, Position{5, 5})
+        Order(0, {{"SKU_0_4", 1}}, Position{0, 0}),
+        Order(1, {{"SKU_0_5", 1}}, Position{0, 0})
     };
     reference.inventory = {
-        InventoryCell("SKU_1_2", 1, Position{0, 2}, Position{1, 2}),
-        InventoryCell("SKU_1_3", 1, Position{0, 3}, Position{1, 3})
+        InventoryCell("SKU_0_4", 1, Position{1, 4}, Position{0, 4}),
+        InventoryCell("SKU_0_5", 1, Position{1, 5}, Position{0, 5})
     };
     Simulation sim(reference);
 
@@ -155,7 +141,7 @@ TEST(SimulationTest, WaitingPropagatesToFollowingAgent) {
 
     ASSERT_EQ(sim.getAgents().size(), 3);
     for (std::size_t i = 0; i < reference.agents.size(); i++) {
-        EXPECT_EQ(sim.getAgents().at(i).getPosition().row, 1);
+        EXPECT_EQ(sim.getAgents().at(i).getPosition().row, 0);
         EXPECT_EQ(sim.getAgents().at(i).getPosition().col,
                   reference.agents.at(i).getPosition().col);
 
@@ -168,25 +154,21 @@ TEST(SimulationTest, WaitingPropagatesToFollowingAgent) {
 }
 
 TEST(SimulationTest, WaitingPropagatesThroughMultipleAgents) {
-    Scenario reference = loadScenario(SCENARIO_DATA_DIR "/test_scenario_small.json");
+    Scenario reference;
+    reference.mapPath = MAP_TEST_DATA_DIR "/corridor_inventory.map";
     reference.agents = {
-//         Agent(10, Position{1, 1}), Agent(20, Position{1, 2}),
-//         Agent(30, Position{1, 3}), Agent(40, Position{1, 4})
-        Agent(10, Position{1, 1}, 5), Agent(20, Position{1, 2}, 5),
-        Agent(30, Position{1, 3}, 5), Agent(40, Position{1, 4}, 5)
+        Agent(10, Position{0, 0}, 5), Agent(20, Position{0, 1}, 5),
+        Agent(30, Position{0, 2}, 5), Agent(40, Position{0, 3}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{5, 5}),
-//         Order(1, Position{1, 3}, Position{5, 5}),
-//         Order(2, Position{1, 4}, Position{5, 5})
-        Order(0, {{"SKU_1_2", 1}}, Position{5, 5}),
-        Order(1, {{"SKU_1_3", 1}}, Position{5, 5}),
-        Order(2, {{"SKU_1_4", 1}}, Position{5, 5})
+        Order(0, {{"SKU_0_4", 1}}, Position{0, 0}),
+        Order(1, {{"SKU_0_5", 1}}, Position{0, 0}),
+        Order(2, {{"SKU_0_6", 1}}, Position{0, 0})
     };
     reference.inventory = {
-        InventoryCell("SKU_1_2", 1, Position{0, 2}, Position{1, 2}),
-        InventoryCell("SKU_1_3", 1, Position{0, 3}, Position{1, 3}),
-        InventoryCell("SKU_1_4", 1, Position{0, 4}, Position{1, 4})
+        InventoryCell("SKU_0_4", 1, Position{1, 4}, Position{0, 4}),
+        InventoryCell("SKU_0_5", 1, Position{1, 5}, Position{0, 5}),
+        InventoryCell("SKU_0_6", 1, Position{1, 6}, Position{0, 6})
     };
     Simulation sim(reference);
 
@@ -194,7 +176,7 @@ TEST(SimulationTest, WaitingPropagatesThroughMultipleAgents) {
         sim.step();
         ASSERT_EQ(sim.getAgents().size(), 4);
         for (std::size_t i = 0; i < reference.agents.size(); i++) {
-            EXPECT_EQ(sim.getAgents().at(i).getPosition().row, 1);
+            EXPECT_EQ(sim.getAgents().at(i).getPosition().row, 0);
             EXPECT_EQ(sim.getAgents().at(i).getPosition().col,
                       reference.agents.at(i).getPosition().col);
         }
@@ -205,13 +187,10 @@ TEST(SimulationTest, WaitingPropagatesThroughMultipleAgents) {
 TEST(SimulationTest, SwapConflictUsesSafeDetour) {
     Scenario reference = loadScenario(SCENARIO_DATA_DIR "/test_scenario_small.json");
     reference.agents = {
-//         Agent(10, Position{1, 4}), Agent(20, Position{1, 5})
         Agent(10, Position{1, 4}, 5), Agent(20, Position{1, 5}, 5)
     };
 
     reference.orders = {
-//         Order(0, Position{1, 6}, Position{5, 5}),
-//         Order(1, Position{1, 1}, Position{5, 5})
         Order(0, {{"SKU_1_6", 1}}, Position{5, 5}),
         Order(1, {{"SKU_1_1", 1}}, Position{5, 5})
     };
@@ -254,12 +233,9 @@ TEST(SimulationTest, SwapConflictUsesSafeDetour) {
 TEST(SimulationTest, DiagonalCrossingMakesAgentsWait) {
     Scenario reference = loadScenario(SCENARIO_DATA_DIR "/test_scenario_small.json");
     reference.agents = {
-//         Agent(10, Position{2, 4}), Agent(20, Position{2, 5})
         Agent(10, Position{2, 4}, 5), Agent(20, Position{2, 5}, 5)
     };
     reference.orders = {
-//         Order(0, Position{3, 5}, Position{5, 5}),
-//         Order(1, Position{4, 3}, Position{5, 5})
         Order(0, {{"SKU_3_5", 1}}, Position{5, 5}),
         Order(1, {{"SKU_4_3", 1}}, Position{5, 5})
     };
@@ -285,11 +261,9 @@ TEST(SimulationTest, PickupStartsDeliveryRoute) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 1})
         Agent(0, Position{1, 1}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{1, 3})
         Order(0, {{"SKU_1_2", 1}}, Position{1, 3})
     };
     reference.inventory = {
@@ -326,16 +300,155 @@ TEST(SimulationTest, PickupStartsDeliveryRoute) {
     EXPECT_DOUBLE_EQ(sim.getThroughput(), 0.5);
 }
 
+TEST(SimulationTest, OneCBSAgentCompletesOrder) {
+    const std::string directory = SCENARIO_DATA_DIR;
+    Scenario reference = loadScenario(directory + "/test_scenario_small.json");
+    reference.agents = {Agent(0, Position{1, 1}, 5)};
+    reference.orders = {Order(0, {{"SKU_1_2", 1}}, Position{1, 3})};
+    reference.inventory = {
+        InventoryCell("SKU_1_2", 1, Position{0, 2}, Position{1, 2})
+    };
+    Simulation sim(reference, PlannerType::CBS);
+
+    sim.step();
+
+    EXPECT_EQ(sim.getCurrentTick(), 1);
+    EXPECT_EQ(sim.getAgents().at(0).getPosition().row, 1);
+    EXPECT_EQ(sim.getAgents().at(0).getPosition().col, 2);
+    EXPECT_EQ(sim.getAgents().at(0).getStatus(), AgentStatus::Delivering);
+    EXPECT_EQ(sim.getOrders().at(0).getStatus(), OrderStatus::Assigned);
+
+    sim.step();
+
+    EXPECT_EQ(sim.getCurrentTick(), 2);
+    EXPECT_EQ(sim.getAgents().at(0).getPosition().row, 1);
+    EXPECT_EQ(sim.getAgents().at(0).getPosition().col, 3);
+    EXPECT_EQ(sim.getAgents().at(0).getStatus(), AgentStatus::Idle);
+    EXPECT_FALSE(sim.getAgents().at(0).getOrderId().has_value());
+    EXPECT_EQ(sim.getOrders().at(0).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getCompletedOrderCount(), 1);
+    EXPECT_TRUE(sim.isFinished());
+}
+
+TEST(SimulationTest, TwoCBSAgentsCompleteOrdersAtSharedDeliveryCell) {
+    const std::string directory = SCENARIO_DATA_DIR;
+    Scenario reference = loadScenario(directory + "/test_scenario_inventory.json");
+    Position delivery{1, 4};
+    reference.agents = {
+        Agent(0, Position{1, 1}, 5),
+        Agent(1, Position{1, 7}, 5)
+    };
+    reference.orders = {
+        Order(0, {{"SKU_A", 1}}, delivery),
+        Order(1, {{"SKU_B", 1}}, delivery)
+    };
+    reference.inventory = {
+        InventoryCell("SKU_A", 1, Position{0, 2}, Position{1, 2}),
+        InventoryCell("SKU_B", 1, Position{0, 6}, Position{1, 6})
+    };
+    Simulation sim(reference, PlannerType::CBS);
+
+    sim.step();
+    ASSERT_EQ(sim.getAgents().at(0).getStatus(), AgentStatus::Delivering);
+    ASSERT_EQ(sim.getAgents().at(1).getStatus(), AgentStatus::Delivering);
+
+    bool firstAgentDelivered = false;
+    bool secondAgentDelivered = false;
+    while (!sim.isFinished() && sim.getCurrentTick() < 20) {
+        sim.step();
+        const Agent& first = sim.getAgents().at(0);
+        const Agent& second = sim.getAgents().at(1);
+        bool firstAtDelivery = first.getPosition().row == delivery.row && first.getPosition().col == delivery.col;
+        bool secondAtDelivery = second.getPosition().row == delivery.row && second.getPosition().col == delivery.col;
+        EXPECT_FALSE(firstAtDelivery && secondAtDelivery);
+        if (firstAtDelivery && first.getStatus() == AgentStatus::Idle) {
+            firstAgentDelivered = true;
+        }
+        if (secondAtDelivery && second.getStatus() == AgentStatus::Idle) {
+            secondAgentDelivered = true;
+        }
+    }
+
+    EXPECT_TRUE(firstAgentDelivered);
+    EXPECT_TRUE(secondAgentDelivered);
+    EXPECT_EQ(sim.getOrders().at(0).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getOrders().at(1).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getCompletedOrderCount(), 2);
+    EXPECT_TRUE(sim.isFinished());
+}
+
+TEST(SimulationTest, TwoCBSAgentsCompleteOrdersAtSharedPickupCell) {
+    const std::string directory = SCENARIO_DATA_DIR;
+    Scenario reference = loadScenario(directory + "/test_scenario_inventory.json");
+    Position pickup{1, 4};
+    reference.agents = {
+        Agent(0, Position{1, 3}, 5),
+        Agent(1, Position{1, 5}, 5)
+    };
+    reference.orders = {
+        Order(0, {{"SKU_A", 1}}, Position{1, 1}),
+        Order(1, {{"SKU_A", 1}}, Position{1, 7})
+    };
+    reference.inventory = {
+        InventoryCell("SKU_A", 2, Position{0, 4}, pickup)
+    };
+    Simulation sim(reference, PlannerType::CBS);
+
+    bool firstAgentPickedUp = false;
+    bool secondAgentPickedUp = false;
+    while (!sim.isFinished() && sim.getCurrentTick() < 20) {
+        sim.step();
+        const Agent& first = sim.getAgents().at(0);
+        const Agent& second = sim.getAgents().at(1);
+        bool firstAtPickup = first.getPosition().row == pickup.row && first.getPosition().col == pickup.col;
+        bool secondAtPickup = second.getPosition().row == pickup.row && second.getPosition().col == pickup.col;
+        EXPECT_FALSE(firstAtPickup && secondAtPickup);
+        if (firstAtPickup && first.getStatus() == AgentStatus::Delivering) {
+            firstAgentPickedUp = true;
+        }
+        if (secondAtPickup && second.getStatus() == AgentStatus::Delivering) {
+            secondAgentPickedUp = true;
+        }
+    }
+
+    EXPECT_TRUE(firstAgentPickedUp);
+    EXPECT_TRUE(secondAgentPickedUp);
+    EXPECT_EQ(sim.getOrders().at(0).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getOrders().at(1).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getCompletedOrderCount(), 2);
+    EXPECT_TRUE(sim.isFinished());
+}
+
+TEST(SimulationTest, CBSStepThrowsWhenPickupExceedsMaxTick) {
+    const std::string directory = SCENARIO_DATA_DIR;
+    Scenario reference = loadScenario(directory + "/test_scenario_inventory.json");
+    reference.agents = {Agent(0, Position{1, 1}, 5)};
+    reference.orders = {Order(0, {{"SKU_A", 1}}, Position{1, 2})};
+    reference.inventory = {
+        InventoryCell("SKU_A", 1, Position{0, 22}, Position{1, 22})
+    };
+    Simulation sim(reference, PlannerType::CBS);
+
+    try {
+        sim.step();
+        FAIL() << "Expected CBS to reach its search limit";
+    } catch (const std::runtime_error& error) {
+        EXPECT_STREQ(error.what(), "CBS could not find routes within the search limits");
+    }
+
+    EXPECT_EQ(sim.getCurrentTick(), 0);
+    EXPECT_EQ(sim.getAgents().at(0).getPosition().row, 1);
+    EXPECT_EQ(sim.getAgents().at(0).getPosition().col, 1);
+    EXPECT_EQ(sim.getCompletedOrderCount(), 0);
+}
+
 TEST(SimulationTest, AgentReceivesAnotherOrderAfterDelivery) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 1})
         Agent(0, Position{1, 1}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{1, 3}),
-//         Order(1, Position{1, 4}, Position{1, 5})
         Order(0, {{"SKU_1_2", 1}}, Position{1, 3}),
         Order(1, {{"SKU_1_4", 1}}, Position{1, 5})
     };
@@ -392,11 +505,9 @@ TEST(SimulationTest, AgentStartsOnPickupCell) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 1})
         Agent(0, Position{1, 1}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 1}, Position{1, 2})
         Order(0, {{"SKU_1_1", 1}}, Position{1, 2})
     };
     reference.inventory = {
@@ -430,11 +541,9 @@ TEST(SimulationTest, PickupAndDeliveryAreSameCell) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 1})
         Agent(0, Position{1, 1}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{1, 2})
         Order(0, {{"SKU_1_2", 1}}, Position{1, 2})
     };
     reference.inventory = {
@@ -468,11 +577,9 @@ TEST(SimulationTest, UnreachableDeliveryThrows) {
     Scenario reference;
     reference.mapPath = directory + "/unreachable_delivery.map";
     reference.agents = {
-//         Agent(0, Position{0, 0})
         Agent(0, Position{0, 0}, 5)
     };
     reference.orders = {
-//         Order(0, Position{0, 1}, Position{2, 1})
         Order(0, {{"SKU_0_1", 1}}, Position{2, 1})
     };
     reference.inventory = {
@@ -513,11 +620,9 @@ TEST(SimulationTest, RunStopsWhenAllOrdersCompleted) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 1})
         Agent(0, Position{1, 1}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{1, 3})
         Order(0, {{"SKU_1_2", 1}}, Position{1, 3})
     };
     reference.inventory = {
@@ -549,14 +654,10 @@ TEST(SimulationTest, RunStopsAtTickLimit) {
     Scenario reference;
     reference.mapPath = directory + "/swap_corridor.map";
     reference.agents = {
-//         Agent(0, Position{0, 4}),
-//         Agent(1, Position{0, 5})
         Agent(0, Position{0, 4}, 5),
         Agent(1, Position{0, 5}, 5)
     };
     reference.orders = {
-//         Order(0, Position{0, 6}, Position{0, 0}),
-//         Order(1, Position{0, 1}, Position{0, 0})
         Order(0, {{"SKU_0_6", 1}}, Position{0, 0}),
         Order(1, {{"SKU_0_1", 1}}, Position{0, 0})
     };
@@ -588,14 +689,10 @@ TEST(SimulationTest, RunUsesTotalTickLimit) {
     Scenario reference;
     reference.mapPath = directory + "/swap_corridor.map";
     reference.agents = {
-//         Agent(0, Position{0, 4}),
-//         Agent(1, Position{0, 5})
         Agent(0, Position{0, 4}, 5),
         Agent(1, Position{0, 5}, 5)
     };
     reference.orders = {
-//         Order(0, Position{0, 6}, Position{0, 0}),
-//         Order(1, Position{0, 1}, Position{0, 0})
         Order(0, {{"SKU_0_6", 1}}, Position{0, 0}),
         Order(1, {{"SKU_0_1", 1}}, Position{0, 0})
     };
@@ -624,13 +721,10 @@ TEST(SimulationTest, ClearingDeliverySkipsOccupiedNeighbor) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 2}),
-//         Agent(1, Position{2, 2})
         Agent(0, Position{1, 2}, 5),
         Agent(1, Position{2, 2}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 4}, Position{1, 2})
         Order(0, {{"SKU_1_4", 1}}, Position{1, 2})
     };
     reference.orders.at(0).markAssigned();
@@ -686,12 +780,9 @@ TEST(SimulationTest, ClearingDeliverySkipsPickupAndDeliveryCells) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 2})
         Agent(0, Position{1, 2}, 5)
     };
     reference.orders = {
-//         Order(0, Position{2, 2}, Position{1, 2}),
-//         Order(1, Position{1, 5}, Position{1, 1})
         Order(0, {{"SKU_2_2", 1}}, Position{1, 2}),
         Order(1, {{"SKU_1_5", 1}}, Position{1, 1})
     };
@@ -724,7 +815,6 @@ TEST(SimulationTest, ClearingDeliverySkipsPickupAndDeliveryCells) {
     }
     Position parked = sim.getAgents().at(0).getPosition();
     for (const Order& order : sim.getOrders()) {
-//         Position pickup = order.getPickupPosition();
         Position pickup = reference.inventory.at(order.getId()).getPickupPosition();
         Position delivery = order.getDeliveryPosition();
         EXPECT_FALSE(parked.row == pickup.row && parked.col == pickup.col);
@@ -747,11 +837,9 @@ TEST(SimulationTest, ClearingDeliveryWaitsWhenNoSuitableNeighbor) {
     Scenario reference;
     reference.mapPath = directory + "/no_delivery_parking.map";
     reference.agents = {
-//         Agent(0, Position{0, 0})
         Agent(0, Position{0, 0}, 5)
     };
     reference.orders = {
-//         Order(0, Position{0, 1}, Position{0, 0})
         Order(0, {{"SKU_0_1", 1}}, Position{0, 0})
     };
     reference.orders.at(0).markAssigned();
@@ -777,14 +865,10 @@ TEST(SimulationTest, ClearingDeliveryAllowsAnotherAgentToDeliver) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_small.json");
     reference.agents = {
-//         Agent(0, Position{1, 1}),
-//         Agent(1, Position{1, 6})
         Agent(0, Position{1, 1}, 5),
         Agent(1, Position{1, 6}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{1, 3}),
-//         Order(1, Position{1, 6}, Position{1, 3})
         Order(0, {{"SKU_1_2", 1}}, Position{1, 3}),
         Order(1, {{"SKU_1_6", 1}}, Position{1, 3})
     };
@@ -832,10 +916,8 @@ TEST(SimulationTest, ClearingDeliveryAllowsAnotherAgentToDeliver) {
 TEST(SimulationTest, AgentDetoursAroundIdleAgent) {
     Scenario reference = loadScenario(SCENARIO_DATA_DIR "/test_scenario_small.json");
     reference.agents = {
-//         Agent(10, Position{1, 1}), Agent(20, Position{1, 2})
         Agent(10, Position{1, 1}, 5), Agent(20, Position{1, 2}, 5)
     };
-//     reference.orders = {Order(0, Position{1, 3}, Position{5, 5})};
     reference.orders = {Order(0, {{"SKU_1_3", 1}}, Position{5, 5})};
     reference.inventory = {
         InventoryCell("SKU_1_3", 1, Position{0, 3}, Position{1, 3})
@@ -865,15 +947,10 @@ TEST(SimulationTest, AgentDetoursAroundIdleAgent) {
 TEST(SimulationTest, UnaffectedAgentMovesWhileOthersWait) {
     Scenario reference = loadScenario(SCENARIO_DATA_DIR "/test_scenario_small.json");
     reference.agents = {
-//         Agent(10, Position{1, 1}), Agent(20, Position{1, 3}),
-//         Agent(30, Position{5, 1})
         Agent(10, Position{1, 1}, 5), Agent(20, Position{1, 3}, 5),
         Agent(30, Position{5, 1}, 5)
     };
     reference.orders = {
-//         Order(0, Position{1, 2}, Position{6, 6}),
-//         Order(1, Position{1, 2}, Position{6, 6}),
-//         Order(2, Position{5, 3}, Position{6, 6})
         Order(0, {{"SKU_1_2", 1}}, Position{6, 6}),
         Order(1, {{"SKU_1_2", 1}}, Position{6, 6}),
         Order(2, {{"SKU_5_3", 1}}, Position{6, 6})
@@ -891,7 +968,6 @@ TEST(SimulationTest, UnaffectedAgentMovesWhileOthersWait) {
     EXPECT_EQ(sim.getAgents().at(0).getPosition().col, 2);
     EXPECT_EQ(sim.getAgents().at(1).getPosition().row, 1);
     EXPECT_EQ(sim.getAgents().at(1).getPosition().col, 3);
-//     EXPECT_EQ(sim.getAgents().at(2).getPosition().row, 4);
     EXPECT_EQ(sim.getAgents().at(2).getPosition().row, 5);
     EXPECT_EQ(sim.getAgents().at(2).getPosition().col, 2);
     EXPECT_EQ(sim.getAgents().at(2).getOrderId(), 2);

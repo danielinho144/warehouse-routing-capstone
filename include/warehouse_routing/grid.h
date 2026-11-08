@@ -8,7 +8,7 @@ namespace warehouse_routing {
     enum class CellType { 
         Free, //walkable, will be graph node
         Shelf, //obstacle, never becomes graph node
-        PickStation // not walkable, pickup/dropoff locations
+        PickStation //not walkable; current pickup and delivery positions use Free cells
     };
 
 

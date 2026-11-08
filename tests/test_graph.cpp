@@ -25,7 +25,7 @@ TEST(GraphTest, CornerCellHasThreeNeighbors) {
     Graph graph(grid);
 
     // (0,0): up and left are off the grid
-    // down = (1,0) = 3, right = (0,1) = 1
+    // down = 3, right = 1, down-right = 4
     EXPECT_EQ(graph.getNeighbors(0), (std::vector<int>{3, 1, 4}));
 }
 
@@ -34,7 +34,7 @@ TEST(GraphTest, EdgeCellHasFiveNeighbors) {
     Graph graph(grid);
 
     // (0,1): up is off the grid
-    // down = (1,1) = 4, left = (0,0) = 0, right = (0,2) = 2
+    // down = 4, left = 0, right = 2, down-left = 3, down-right = 5
     EXPECT_EQ(graph.getNeighbors(1), (std::vector<int>{4, 0, 2, 3, 5}));
 }
 
@@ -43,6 +43,7 @@ TEST(GraphTest, InteriorCellHasEightNeighbors) {
     Graph graph(grid);
 
     // (1,1): up = 1, down = 7, left = 3, right = 5
+    // diagonals: up-left = 0, up-right = 2, down-left = 6, down-right = 8
     EXPECT_EQ(graph.getNeighbors(4), (std::vector<int>{1, 7, 3, 5, 0, 2, 6, 8}));
 }
 
