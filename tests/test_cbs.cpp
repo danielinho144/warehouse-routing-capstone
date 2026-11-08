@@ -22,7 +22,6 @@ TEST(CBSTest, NoAgentsReturnsSuccessfulEmptyPlan) {
 TEST(CBSTest, SingleAgentReachesGoal) {
     Grid grid(3, 3);
     Graph graph(grid);
-    //std::vector<Agent> agents = {Agent(7, Position{0, 0})};
     std::vector<Agent> agents = {Agent(7, Position{0, 0}, 5)};
     std::unordered_map<int, int> goals = {{7, 8}};
 
@@ -36,7 +35,6 @@ TEST(CBSTest, SingleAgentReachesGoal) {
 TEST(CBSTest, StartAtGoalAllowsZeroTicks) {
     Grid grid(3, 3);
     Graph graph(grid);
-    //std::vector<Agent> agents = {Agent(7, Position{1, 1})};
     std::vector<Agent> agents = {Agent(7, Position{1, 1}, 5)};
     std::unordered_map<int, int> goals = {{7, 4}};
 
@@ -50,7 +48,6 @@ TEST(CBSTest, SeparateRoutesNeedNoBranching) {
     Grid grid(3, 3);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{2, 0})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{2, 0}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 2}, {9, 8}};
@@ -68,7 +65,6 @@ TEST(CBSTest, VertexConflictIsResolvedAtMinimumCombinedCost) {
     Grid grid(3, 3);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{1, 0}), Agent(9, Position{1, 2})
         Agent(2, Position{1, 0}, 5), Agent(9, Position{1, 2}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 5}, {9, 3}};
@@ -100,7 +96,6 @@ TEST(CBSTest, SwapRequiresFurtherBranchingAndHasMinimumCost) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{0, 1})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{0, 1}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 1}, {9, 0}};
@@ -124,7 +119,6 @@ TEST(CBSTest, DiagonalCrossingIsResolvedWithWait) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{0, 1})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{0, 1}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 3}, {9, 2}};
@@ -146,7 +140,6 @@ TEST(CBSTest, GoalOccupantIsRespectedAfterItsPathEnds) {
     Grid grid(2, 3);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 1}), Agent(9, Position{0, 0})
         Agent(2, Position{0, 1}, 5), Agent(9, Position{0, 0}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 1}, {9, 2}};
@@ -164,7 +157,6 @@ TEST(CBSTest, RoutesDoNotCutBlockedCorners) {
     Grid grid(3, 3);
     grid.setCellType(0, 1, CellType::Shelf);
     Graph graph(grid);
-    //std::vector<Agent> agents = {Agent(2, Position{0, 0})};
     std::vector<Agent> agents = {Agent(2, Position{0, 0}, 5)};
     std::unordered_map<int, int> goals = {{2, 4}};
 
@@ -178,7 +170,6 @@ TEST(CBSTest, RepeatedCallsAndInputOrderProduceSameTieResult) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(9, Position{0, 1}), Agent(2, Position{0, 0})
         Agent(9, Position{0, 1}, 5), Agent(2, Position{0, 0}, 5)
     };
     std::unordered_map<int, int> goals = {{9, 2}, {2, 3}};
@@ -205,7 +196,6 @@ TEST(CBSTest, UnreachableRootReturnsNoPlan) {
         grid.setCellType(1, col, CellType::Shelf);
     }
     Graph graph(grid);
-    //std::vector<Agent> agents = {Agent(2, Position{0, 0})};
     std::vector<Agent> agents = {Agent(2, Position{0, 0}, 5)};
     std::unordered_map<int, int> goals = {{2, 8}};
 
@@ -215,7 +205,6 @@ TEST(CBSTest, UnreachableRootReturnsNoPlan) {
 TEST(CBSTest, ArrivalBeyondHorizonReturnsNoPlan) {
     Grid grid(3, 3);
     Graph graph(grid);
-    //std::vector<Agent> agents = {Agent(2, Position{0, 0})};
     std::vector<Agent> agents = {Agent(2, Position{0, 0}, 5)};
     std::unordered_map<int, int> goals = {{2, 8}};
 
@@ -226,7 +215,6 @@ TEST(CBSTest, InfeasibleChildrenAreDiscarded) {
     Grid grid(1, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{0, 1})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{0, 1}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 1}, {9, 0}};
@@ -238,7 +226,6 @@ TEST(CBSTest, ExpansionLimitStopsSearchBeforeChildrenAreExamined) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{0, 1})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{0, 1}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 3}, {9, 2}};
@@ -251,7 +238,6 @@ TEST(CBSTest, InitialSharedPositionHasNoValidBranch) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{0, 0})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{0, 0}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 1}, {9, 2}};
@@ -263,7 +249,6 @@ TEST(CBSTest, SharedPermanentGoalCannotBeConflictFree) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(9, Position{0, 1})
         Agent(2, Position{0, 0}, 5), Agent(9, Position{0, 1}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 3}, {9, 3}};
@@ -294,7 +279,6 @@ TEST(CBSTest, DuplicateAgentIDsAreRejected) {
     Grid grid(2, 2);
     Graph graph(grid);
     std::vector<Agent> agents = {
-        //Agent(2, Position{0, 0}), Agent(2, Position{0, 1})
         Agent(2, Position{0, 0}, 5), Agent(2, Position{0, 1}, 5)
     };
     std::unordered_map<int, int> goals = {{2, 3}};
@@ -305,7 +289,6 @@ TEST(CBSTest, DuplicateAgentIDsAreRejected) {
 TEST(CBSTest, MissingGoalIsRejected) {
     Grid grid(2, 2);
     Graph graph(grid);
-    //std::vector<Agent> agents = {Agent(2, Position{0, 0})};
     std::vector<Agent> agents = {Agent(2, Position{0, 0}, 5)};
     std::unordered_map<int, int> goals;
 
@@ -318,7 +301,6 @@ TEST(CBSTest, InvalidStartCoordinatesAreRejectedBeforeNodeConversion) {
     std::unordered_map<int, int> goals = {{2, 8}};
     // Column 3 would otherwise alias valid node 3; column -1 can alias node 2.
     for (Position position : {Position{-1, 0}, Position{3, 0}, Position{0, 3}, Position{1, -1}}) {
-        //std::vector<Agent> agents = {Agent(2, position)};
         std::vector<Agent> agents = {Agent(2, position, 5)};
         EXPECT_THROW(planCBSPaths(graph, agents, goals, 3, 100), std::invalid_argument);
     }
@@ -328,12 +310,10 @@ TEST(CBSTest, BlockedStartAndBlockedOrInvalidGoalsAreRejected) {
     Grid grid(3, 3);
     grid.setCellType(1, 1, CellType::Shelf);
     Graph graph(grid);
-    //std::vector<Agent> blocked = {Agent(2, Position{1, 1})};
     std::vector<Agent> blocked = {Agent(2, Position{1, 1}, 5)};
     std::unordered_map<int, int> validGoal = {{2, 8}};
     EXPECT_THROW(planCBSPaths(graph, blocked, validGoal, 3, 100), std::invalid_argument);
 
-    //std::vector<Agent> agents = {Agent(2, Position{0, 0})};
     std::vector<Agent> agents = {Agent(2, Position{0, 0}, 5)};
     for (int node : {4, -1, 9}) {
         std::unordered_map<int, int> goals = {{2, node}};

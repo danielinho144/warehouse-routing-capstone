@@ -27,7 +27,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-# Your project's own library (Grid, Graph, later A*/CBS) lives in src/.
+# The simulation and A*/CBS library lives in src/.
 add_subdirectory(src)
 
 # Turns on CTest integration for this whole project - required for

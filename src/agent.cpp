@@ -35,13 +35,11 @@ namespace warehouse_routing {
 
     //update agent pos
     void Agent::moveTo(Position position) {
-        //do stuff
         position_ = position;
     }
 
     //store orderID, change from Idle to PickupPending
     void Agent::assignOrder(int orderID) {
-        //do stuff
         if (status_ != AgentStatus::Idle || orderID_.has_value()) {
             throw std::runtime_error("Order assign error");
         }
@@ -49,15 +47,6 @@ namespace warehouse_routing {
         status_ = AgentStatus::PickupPending;
     }
 
-    /*change PickupPending to Delivering
-    void Agent::pickUp() {
-        // do stuff
-        if (status_ != AgentStatus::PickupPending || !orderID_.has_value()) {
-            throw std::runtime_error("Pickup error");
-        }
-        status_ = AgentStatus::Delivering;
-    }
-    */
 
     void Agent::startDelivery() {
         if (status_ != AgentStatus::PickupPending || !orderID_.has_value()) {
@@ -69,9 +58,8 @@ namespace warehouse_routing {
         status_ = AgentStatus::Delivering;
     }
 
-    //clear orderID, change back to Idle
+    //finish delivery; continue pickup if another trip is needed, otherwise release order
     void Agent::completeDelivery(bool needsAnotherTrip) {
-        //do stuff
         if (status_ != AgentStatus::Delivering || !orderID_.has_value()) {
             throw std::runtime_error("Delivery error");
         }

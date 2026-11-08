@@ -28,9 +28,6 @@ namespace warehouse_routing {
             }
             
             //run A* from the agent to each pickup
-            //Position pickup = order.getPickupPosition();
-            //int goalID = graph.toNodeId(pickup.row, pickup.col);
-            //std::vector<int> path = aStar(graph, startID, goalID);
 
             bool reachablePickup = false;
             std::size_t shortestPickupCost = 0;
@@ -63,22 +60,11 @@ namespace warehouse_routing {
             if (reachablePickup == false) {
                 continue;
             }
+            //keep cheapest order; ties choose lower order ID
             if (bestOrder == nullptr || shortestPickupCost < bestCost || (shortestPickupCost == bestCost && order.getId() < bestOrder->getId())) {
                 bestOrder = &order;
                 bestCost = shortestPickupCost;
             }
-
-            //if (path.empty()) { //skip unreachable pickups
-                //continue;
-            //}
-
-            //std::size_t cost = path.size() -1;
-
-            //keep cheapest route
-            //if (bestOrder == nullptr || cost < bestCost || (cost == bestCost && order.getId() < bestOrder->getId())) {
-                //bestOrder = &order;
-                //bestCost = cost;
-            //} //if costs tie, choose lower ID
         }
         if (bestOrder == nullptr) {
             return false;

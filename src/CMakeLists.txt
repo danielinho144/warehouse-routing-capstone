@@ -1,4 +1,4 @@
-# Builds Grid, Graph, and (later) the A*/CBS solvers into one library
+# Builds the simulation and A*/CBS solvers into one library
 # that both the main project and the tests link against.
 add_library(warehouse_routing_core
   grid.cpp
@@ -28,7 +28,7 @@ target_include_directories(warehouse_routing_core PUBLIC
 )
 
 # Links the nlohmann/json library (pulled in via FetchContent at
-# the top level) so grid.cpp/graph.cpp can use it if/when needed.
+# the top level) for scenario loading and replay export.
 target_link_libraries(warehouse_routing_core PUBLIC
   nlohmann_json::nlohmann_json
 )

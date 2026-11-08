@@ -36,10 +36,6 @@ namespace warehouse_routing {
         return ID_;
     }
 
-    //get pickupPosition
-    //Position Order::getPickupPosition() const {
-        //return pickup_;
-    //}
 
     const std::vector<OrderLine>& Order::getLines() const {
         return lines_;
@@ -58,7 +54,6 @@ namespace warehouse_routing {
 
     //mark order assigned
     void Order::markAssigned() {
-        //do stuff
         if (status_ != OrderStatus::Unclaimed) {
             throw std::runtime_error("Cannot assign");
         }
@@ -67,7 +62,6 @@ namespace warehouse_routing {
 
     //mark order completed
     void Order::markCompleted() {
-        //do stuff
         if (status_ != OrderStatus::Assigned) {
             throw std::runtime_error("Cannot complete");
         }

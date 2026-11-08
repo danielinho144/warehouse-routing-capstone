@@ -1,11 +1,11 @@
 # CBS Design
 
-Status as of November 2, 2026: Week 7 fixed-goal CBS search is complete. Warehouse simulation integration is next for Week 8. The latest combined build passed 253 tests, including 22 CBS tests.
+As of November 8, 2026, CBS is connected to the warehouse simulation. All 284 tests passed.
 
 ## Purpose
 
-- Conflict-Based Search coordinates fixed-goal agent routes to prevent vertex, swap, and diagonal conflicts. It is not yet used by the warehouse simulation.
-- The independent A* implementation plans each agent's route separately and handles conflicts during the simulation. CBS will detect the conflicts in the planned paths, add restrictions, and replan the affected agents before movement occurs.
+- Conflict-Based Search coordinates fixed-goal agent routes to prevent vertex, swap, and diagonal conflicts. The simulation supplies a goal for each agent when it requests a plan.
+- The independent A* implementation plans each agent's route separately and handles conflicts during the simulation. CBS detects the conflicts in the planned paths, adds restrictions, and replans the affected agents before movement occurs.
 - The project will compare how these approaches affect warehouse order throughput.
 
 ## Data Structures
@@ -123,28 +123,26 @@ The sketches are in [Hand-Worked Examples.pdf](<Hand-Worked Examples.pdf>).
 - Completed full-path conflict scanning for week 6.
 - Completed fixed-goal CBS root planning, node selection, two-child branching, constrained replanning, cost updates, and search limits.
 - Added Graph::isInBounds to validate coordinates before converting them to node IDs.
-- 11 constrained A* tests, 15 full-path conflict detection tests, and 22 CBS tests. The latest full combined test run passed all 253 tests.
+- 11 constrained A* tests, 15 full-path conflict detection tests, and 22 CBS tests.
 - Conflict detection tests cover vertex, swap, and diagonal conflicts, goal waiting, empty input, conflict-free paths, and conflict selection order. Each detected conflict is checked for type, agent IDs, start and end nodes, and tick.
 - CBS tests cover vertex, swap, and diagonal resolution; small-case minimum costs; goal waiting; blocked corners; deterministic ties; empty input; invalid inputs; unreachable goals; and search limits. These are targeted checks, not a proof for every warehouse scenario.
-- Multi-item inventory, capacity, repeated trips, shortage handling, and baseline experiments are implemented separately. CBS has not yet been connected to those simulation tasks.
+- Simulation tests cover a single-agent order, two agents sharing a pickup or delivery cell, planned waits, and a pickup beyond the search limit.
 
-## Limitations and Integration
+## Week 8 Simulation Integration
 
-- Failure within maxTick does not prove no longer path exists.
-- Reaching maxExpandedNodes does not prove the problem has no solution.
-- Agents remain at their goals, so two agents cannot have the same permanent goal in a conflict-free plan. Adding a delivery zone alone does not remove the need to choose destinations and clear them after unloading.
-- The current optional result does not report whether failure came from root planning, exhausted candidates, or the expansion limit.
-- Simulation integration must define goals for pickup, delivery, and idle agents, handle planned waits, and replan when tasks change.
-- Existing simulation path progress advances on movement. CBS paths can contain waits, so execution must advance the path index for an executed wait too.
-- Search failure during simulation must have an explicit handling policy. Do not present a fallback baseline route as a CBS solution.
+- The runner accepts `baseline` or `cbs`. Both planners use the simulation’s order assignment, inventory, and pickup and delivery rules.
+- One agent owns a shared destination at a time. A waiting agent keeps its task and uses its current cell as its CBS goal. The owner releases access after leaving the cell. An idle agent blocking a waiter can request a parking cell.
+- Each new CBS search starts from the agents’ current cells at planning tick 0. A task change or a handoff can trigger a new joint plan. While an agent still has work, a missing route for an idle teammate also triggers replanning.
+- A successful plan replaces the agents’ paths and resets their progress to 0. Each planned move or wait advances the path index by one.
 
-## Week 8 Next Steps
+## Search Limits
 
-1. Add a baseline/CBS planner choice without changing fulfillment rules.
-2. Define shared pickup and delivery access, clearing, and idle parking goals.
-3. Supply current positions and goals for all agents and execute coordinated paths, including waits.
-4. Replan on task changes with a fresh planning tick 0 and consistent search limits.
-5. Test small warehouse runs before comparing the five multi-item scenarios.
-6. Export the state needed for the new JavaScript visualization after simulation behavior is stable.
+- The simulation sets `maxTick` to 20 for each CBS search. Each agent has up to 20 moves or waits to reach its current goal. The simulation clock continues across searches.
+- The simulation also sets `maxExpandedNodes` to 100. If CBS returns no plan within the limits, `Simulation::step()` throws a runtime error. The solver result does not identify which limit or search condition caused the failure.
+- The search-limit test places a pickup 21 moves from the start on an open aisle. The first step raises the expected error with the agent still at its start and the simulation clock at 0.
+
+## Week 9 Comparison Work
+
+Run the five multi-item scenarios with the same inputs and simulation tick limit for both planners. Record completed orders, ticks, throughput, and search-limit failures.
 
 The [multi-item baseline](multi_item_baseline_results.md) completed all 20 orders with 2–8 agents. The 10-agent run completed 8 orders and stopped moving after tick 384 before reaching the 5,000-tick limit. This apparent pickup-aisle congestion deadlock remains a baseline result for comparison, not a guarantee that CBS will resolve it.

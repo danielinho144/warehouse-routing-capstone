@@ -8,7 +8,7 @@
 
 namespace warehouse_routing {
 
-    //check whther two agents propose the same destination
+    //check whether two agents propose the same destination
     bool hasVertexConflict(int nextNodeA, int nextNodeB) {
         return nextNodeA == nextNodeB;
     }

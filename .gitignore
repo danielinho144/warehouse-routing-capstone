@@ -82,3 +82,6 @@ venv/
 # My timelines
 /warehouse_routing_timeline.md
 /senior_project_report.md
+
+# Local implementation study notes
+/IMPLEMENTATION_KNOWLEDGE.md

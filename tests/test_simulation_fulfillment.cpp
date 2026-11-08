@@ -266,13 +266,15 @@ TEST(SimulationFulfillmentTest, TwoAgentsCompeteForLastUnitAndEmptyAgentIsReleas
     EXPECT_EQ(sim.getAgents().at(1).getOrderId(), 1);
     EXPECT_EQ(sim.getAgents().at(1).getCurrentLoad(), 0);
 
-    sim.step();
+    EXPECT_FALSE(sim.isFinished());
+    while (sim.getOrders().at(1).getStatus() == OrderStatus::Assigned && sim.getCurrentTick() < 100) {
+        sim.step();
+    }
 
     EXPECT_EQ(sim.getOrders().at(1).getStatus(), OrderStatus::Unfinished);
     EXPECT_EQ(sim.getAgents().at(1).getStatus(), AgentStatus::Idle);
     EXPECT_FALSE(sim.getAgents().at(1).getOrderId().has_value());
     EXPECT_EQ(sim.getAgents().at(1).getCurrentLoad(), 0);
-    EXPECT_FALSE(sim.isFinished());
 
     EXPECT_NO_THROW(sim.run(100));
 

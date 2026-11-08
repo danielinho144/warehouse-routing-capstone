@@ -1,4 +1,4 @@
-#creates test executable, build from both test files
+#creates test executable from the test files
 add_executable(warehouse_routing_tests
 test_grid.cpp
 test_graph.cpp
@@ -16,10 +16,11 @@ test_inventory.cpp
 test_pickup_task.cpp
 test_simulation_fulfillment.cpp
 test_cbs.cpp
+test_destination_access.cpp
 )
 
 #link in warehouse_routing_tests and gtest_main
-#so tests can use grid
+#so tests can use the core library and GoogleTest
 target_link_libraries(warehouse_routing_tests PRIVATE
 warehouse_routing_core
 gtest_main

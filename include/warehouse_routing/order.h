@@ -3,11 +3,11 @@
 #include <string>
 #include <vector>
 
-//order should have 
+//order stores 
 // ID
-// Pickup Position
+// Item lines with required and delivered quantities
 // Delivery Position
-// Status: Unclaimed, Assigned or Completed
+// Status: Unclaimed, Assigned, Completed or Unfinished
 
 namespace warehouse_routing {
 
@@ -30,7 +30,6 @@ namespace warehouse_routing {
 
         int getId() const;
 
-        //Position getPickupPosition() const;
 
         const std::vector<OrderLine>& getLines() const;
 
@@ -48,7 +47,6 @@ namespace warehouse_routing {
 
         private:
         int ID_;
-        //Position pickup_;
         Position delivery_;
         OrderStatus status_;
         std::vector<OrderLine> lines_;
