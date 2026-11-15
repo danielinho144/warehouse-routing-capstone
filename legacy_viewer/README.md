@@ -1,18 +1,11 @@
-# Warehouse replay viewer
+# Legacy warehouse replay viewer
 
-Generate a recording from the repository root:
-
-```bash
-cmake --build build
-./build/src/warehouse_sim data/scenarios/scenario_2_agents.json 5000
-```
-
-The executable writes `replay.json` in the current directory, overwriting the previous recording. Copy or rename it if you want to keep several runs.
+This viewer reads older recordings with a pickup position on each order. Current recordings store pickup locations in the inventory. Use the [current replay viewer](../visualization/index.html) for those files.
 
 On macOS, open the viewer:
 
 ```bash
-open viewer/index.html
+open legacy_viewer/index.html
 ```
 
 Click **Open replay** and choose `replay.json`, or drag the JSON file into the page. No server, installation, or internet connection is required. Keep `index.html`, `style.css`, and `replay.js` together in the viewer directory.

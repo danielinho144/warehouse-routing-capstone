@@ -480,6 +480,34 @@ namespace warehouse_routing {
             }
             auto taskGoals = buildPlanningGoals();
             updateDestinationAccess(taskGoals);
+            if (acceptedBackup_.has_value()) {
+                const StepAsideGoal saved = acceptedBackup_.value();
+                bool reachedSpot = false;
+                for (const Agent& agent : agents_) {
+                    if (agent.getId() == saved.blockerID) {
+                        Position position = agent.getPosition();
+                        int currentNode = graph_.toNodeId(position.row, position.col);
+                        reachedSpot = (currentNode == saved.spot);
+                        break;
+                    }
+                }
+                bool ownerStillNeedsPickup = false;
+                if (pickUpTasks_.contains(saved.ownerID)) {
+                    Position pickup = pickUpTasks_.at(saved.ownerID).pickupPosition;
+                    int pickupNode = graph_.toNodeId(pickup.row, pickup.col);
+                    ownerStillNeedsPickup = (pickupNode == saved.pickupNode) && canUseDestination(saved.ownerID, pickupNode);
+                }
+                bool blockerStillWaiting = false;
+                if (taskGoals.contains(saved.blockerID) && taskGoals.at(saved.blockerID) == saved.blockerTaskGoal && 
+                    destinationAccess_.contains(saved.blockerTaskGoal)) {
+                        const auto& waitingAgents = destinationAccess_.at(saved.blockerTaskGoal).waitingAgents;
+                        blockerStillWaiting = std::find(waitingAgents.begin(), waitingAgents.end(), saved.blockerID) != waitingAgents.end();
+                    }
+                    if (reachedSpot || !ownerStillNeedsPickup || !blockerStillWaiting) {
+                        acceptedBackup_.reset();
+                    }
+            }
+
             auto cbsGoals = buildCBSGoals(taskGoals);
 
             bool needsPlan = !pendingRouteGoals_.empty();
@@ -508,8 +536,8 @@ namespace warehouse_routing {
                 return;
             }
 
-            const int maxTick = 20;
-            const int maxExpandedNodes = 100;
+            const int maxTick = 150;
+            const int maxExpandedNodes = 200;
             if (!tryPlanCBSRoutes(taskGoals, maxTick, maxExpandedNodes)) {
                 throw std::runtime_error("CBS could not find routes within the search limits");
             }
@@ -671,8 +699,14 @@ namespace warehouse_routing {
         state.clearing = true;
     }
 
+
+
     //plan and execute coordinated CBS routes
-    std::unordered_map<int, int> Simulation::buildCBSGoals(const std::unordered_map<int, int>& taskGoals) const {
+    std::unordered_map<int, int> Simulation::buildCBSGoals(const std::unordered_map<int, int>& taskGoals,
+        std::optional<StepAsideGoal>* backup) const {
+        if (backup != nullptr) {
+            backup->reset();
+        }
         std::unordered_map<int, int> cbsGoals = taskGoals;
         for (const Agent& agent : agents_) {
             int agentID = agent.getId();
@@ -686,12 +720,193 @@ namespace warehouse_routing {
                 cbsGoals[agentID] = graph_.toNodeId(position.row, position.col);
             }
         }
+        std::set<int> unavailable;
+        for (const Agent& agent : agents_) {
+            Position position = agent.getPosition();
+            unavailable.insert(graph_.toNodeId(position.row, position.col));
+        }
+        for (const InventoryCell& inventory : inventory_) {
+            Position pickup = inventory.getPickupPosition();
+            unavailable.insert(graph_.toNodeId(pickup.row, pickup.col));
+        }
+        for (const Order& order : orders_) {
+            Position delivery = order.getDeliveryPosition();
+            unavailable.insert(graph_.toNodeId(delivery.row, delivery.col));
+        }
+        for (const auto& entry : cbsGoals) {
+            unavailable.insert(entry.second);
+        }
+
+        //step aside if waiting here would block another agent's destination
+        for (const Agent& agent : agents_) {
+            int agentID = agent.getId();
+            Position position = agent.getPosition();
+            int currentNode = graph_.toNodeId(position.row, position.col);
+            if (cbsGoals.at(agentID) != currentNode || !destinationAccess_.contains(currentNode)) {
+                continue;
+            }
+            const DestinationAccess& access = destinationAccess_.at(currentNode);
+            if (access.owner != agentID || !access.clearing || access.waitingAgents.empty()) {
+                continue;
+            }
+            for (int neighbor : graph_.getNeighbors(currentNode)) {
+                if (unavailable.contains(neighbor)) {
+                    continue;
+                }
+                cbsGoals.at(agentID) = neighbor;
+                unavailable.insert(neighbor);
+                break;
+            }
+        }
+        for (const Agent& agent : agents_) {
+            int agentID = agent.getId();
+            if (pickUpTasks_.contains(agentID)) {
+                Position pickupPos = pickUpTasks_.at(agentID).pickupPosition;
+                int pickupNode = graph_.toNodeId(pickupPos.row, pickupPos.col);
+                if (!canUseDestination(agentID, pickupNode)) {
+                    continue;
+                }
+                Position agentPos = agent.getPosition();
+                int agentNode = graph_.toNodeId(agentPos.row, agentPos.col);
+                if (agentNode == pickupNode) {
+                    continue;
+                }
+                
+                std::vector<int> blockerIDs;
+                std::set<int> blockedNodes;
+
+                for (const Agent& candidate : agents_) {
+                    int candidateID = candidate.getId();
+                    Position candidatePos = candidate.getPosition();
+                    int candidateNode = graph_.toNodeId(candidatePos.row, candidatePos.col);
+                    if (candidateID == agentID || cbsGoals.at(candidateID) != candidateNode) {
+                        continue;
+                    }
+
+                    int taskGoal = taskGoals.at(candidateID);
+                    if (!destinationAccess_.contains(taskGoal)) {
+                        continue;
+                    }
+                    const auto& waitingAgents = destinationAccess_.at(taskGoal).waitingAgents;
+                    if (std::find(waitingAgents.begin(), waitingAgents.end(), candidateID) != waitingAgents.end()) {
+                        blockerIDs.push_back(candidateID);
+                        blockedNodes.insert(candidateNode);
+                    }
+                }
+
+                std::set<int> reachable = reachableNodes(agentNode, blockedNodes);
+                if (reachable.contains(pickupNode)) {
+                    continue;
+                }
+                if (acceptedBackup_.has_value()) {
+                    const StepAsideGoal& saved = acceptedBackup_.value();
+                    bool stillBlocking = std::find(blockerIDs.begin(), blockerIDs.end(), saved.blockerID) != blockerIDs.end();
+                    bool sameHandoff = saved.ownerID == agentID && saved.pickupNode == pickupNode && stillBlocking && taskGoals.at(saved.blockerID) == saved.blockerTaskGoal;
+                    if (sameHandoff) {
+                        int blockerNode = cbsGoals.at(saved.blockerID);
+                        const std::vector<int>& neighbors = graph_.getNeighbors(blockerNode);
+                        bool isNeighbor = std::find(neighbors.begin(), neighbors.end(), saved.spot) != neighbors.end();
+                        if (isNeighbor && !unavailable.contains(saved.spot)) {
+                            std::set<int> trialBlocked = blockedNodes;
+                            trialBlocked.erase(blockerNode);
+                            trialBlocked.insert(saved.spot);
+                            if (reachableNodes(agentNode, trialBlocked).contains(pickupNode)) {
+                                cbsGoals.at(saved.blockerID) = saved.spot;
+                                unavailable.insert(saved.spot);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                bool foundSpot = false;
+                for (int blockerID : blockerIDs) {
+                    int blockerNode = cbsGoals.at(blockerID);
+                    for (int neighbor : graph_.getNeighbors(blockerNode)) {
+                        if (unavailable.contains(neighbor)) {
+                            continue;
+                        }
+                        
+                        std::set<int> trialBlocked = blockedNodes;
+                        trialBlocked.erase(blockerNode);
+                        trialBlocked.insert(neighbor);
+
+                        if (!reachableNodes(agentNode, trialBlocked).contains(pickupNode)) {
+                            continue;
+                        }
+
+                        if (!foundSpot) {
+                            cbsGoals.at(blockerID) = neighbor;
+                            unavailable.insert(neighbor);
+                            foundSpot = true;
+                            if (backup == nullptr || backup->has_value()) {
+                                break;
+                            }
+                            continue;
+                        }
+                        *backup = StepAsideGoal{
+                            .blockerID = blockerID,
+                            .blockerTaskGoal = taskGoals.at(blockerID),
+                            .ownerID = agentID,
+                            .pickupNode = pickupNode,
+                            .spot = neighbor
+                        };
+                        break;
+                    }
+                    if (foundSpot) {
+                        break;
+                    }
+                }
+            }
+        }
         return cbsGoals;
     }
 
+    std::set<int> Simulation::reachableNodes(int startNode, const std::set<int>& blockedNodes) const {
+        std::set<int> visited;
+        std::queue<int> candidates;
+
+        visited.insert(startNode);
+        candidates.push(startNode);
+
+        while (!candidates.empty()) {
+            int node = candidates.front();
+            candidates.pop();
+
+            for (int neighbor : graph_.getNeighbors(node)) {
+                if (visited.contains(neighbor) || blockedNodes.contains(neighbor)) {
+                    continue;
+                }
+                visited.insert(neighbor);
+                candidates.push(neighbor);
+            }
+        }
+        return visited;
+    }
+
     bool Simulation::tryPlanCBSRoutes(const std::unordered_map<int, int>& taskGoals, int maxTick, int maxExpandedNodes) {
-        std::unordered_map<int, int> cbsGoals = buildCBSGoals(taskGoals);
-        auto result = planCBSPaths(graph_, agents_, cbsGoals, maxTick, maxExpandedNodes);
+        std::optional<StepAsideGoal> backup;
+        std::unordered_map<int, int> cbsGoals = buildCBSGoals(taskGoals, &backup);
+        bool hitExpansionLimit = false;
+        auto result = planCBSPaths(graph_, agents_, cbsGoals, maxTick, maxExpandedNodes, &hitExpansionLimit);
+        if (!result.has_value() && hitExpansionLimit && backup.has_value()) {
+            int backupAgentID = backup->blockerID;
+            int backupNode = backup->spot;
+            bool taken = false;
+
+            for (const auto& [agentID, goalNode] : cbsGoals) {
+                if (agentID != backupAgentID && goalNode == backupNode) {
+                    taken = true;
+                    break;
+                }
+            }
+            if (!taken) {
+                cbsGoals.at(backupAgentID) = backupNode;
+                result = planCBSPaths(graph_, agents_, cbsGoals, maxTick, maxExpandedNodes);
+            }
+            if (result.has_value()) {
+                acceptedBackup_ = backup;
+            }
+        }
         if (!result.has_value()) {
             return false;
         }
@@ -821,8 +1036,53 @@ namespace warehouse_routing {
 
     void Simulation::moveAgents() {
         auto proposedMoves = proposeMoves();
-        attemptDetours(proposedMoves);
-        for (Agent& agent : agents_) {
+        applyDestinationPermissions(proposedMoves);
+        auto resolvedMoves = proposedMoves;
+        resolveConflicts(resolvedMoves);
+
+        //detour around occupied cells once waits have propagated through the queue
+        std::set<int> occupied;
+        for (const Agent& agent : agents_) {
+            Position position = agent.getPosition();
+            occupied.insert(graph_.toNodeId(position.row, position.col));
+        }
+        std::vector<int> blockedAgents;
+        for (const Agent& agent : agents_) {
+            int agentID = agent.getId();
+            int intended = proposedMoves.at(agentID);
+            if (intended != resolvedMoves.at(agentID) && occupied.contains(intended)) {
+                blockedAgents.push_back(agentID);
+            }
+        }
+
+        auto detours = planDetours(blockedAgents);
+        for (int agentID : blockedAgents) {
+            if (!detours.contains(agentID)) {
+                continue;
+            }
+            auto trialMoves = proposedMoves;
+            int nextNode = detours.at(agentID).at(1);
+            trialMoves.at(agentID) = nextNode;
+            applyDestinationPermissions(trialMoves);
+            resolveConflicts(trialMoves);
+            if (trialMoves.at(agentID) == nextNode) {
+                proposedMoves.at(agentID) = nextNode;
+            }
+        }
+        applyDestinationPermissions(proposedMoves);
+        resolveConflicts(proposedMoves);
+        for (auto& [agentID, path] : detours) {
+            if (proposedMoves.at(agentID) == path.at(1)) {
+                paths_.at(agentID) = std::move(path);
+                pathProgress_.at(agentID) = 0;
+            }
+        }
+        executeMoves(proposedMoves);
+
+    }
+
+    void Simulation::applyDestinationPermissions(std::unordered_map<int, int>& proposedMoves) const {
+        for (const Agent& agent : agents_) {
             int agentID = agent.getId();
             auto nextMove = proposedMoves.at(agentID);
             if (!destinationAccess_.contains(nextMove)) {
@@ -836,9 +1096,6 @@ namespace warehouse_routing {
                 proposedMoves.at(agentID) = graph_.toNodeId(position.row, position.col);
             }
         }
-        resolveConflicts(proposedMoves);
-        executeMoves(proposedMoves);
-
     }
 
     std::unordered_map<int, int> Simulation::proposeMoves() const {
@@ -861,41 +1118,25 @@ namespace warehouse_routing {
         return proposedMoves;
     }
 
-    void Simulation::attemptDetours(std::unordered_map<int, int>& proposedMoves) {
+    std::unordered_map<int, std::vector<int>> Simulation::planDetours(const std::vector<int>& blockedAgents) const {
+        std::unordered_map<int, std::vector<int>> detours;
+        if (blockedAgents.empty()) {
+            return detours;
+        }
+        Grid detourGrid = grid_;
         for (const Agent& agent : agents_) {
-            if (agent.getStatus() != AgentStatus::PickupPending &&
-                agent.getStatus() != AgentStatus::Delivering) {
+            Position occupied = agent.getPosition();
+            detourGrid.setCellType(occupied.row, occupied.col, CellType::Shelf);
+        }
+        Graph detourGraph(detourGrid);
+        for (const Agent& agent : agents_) {
+            int agentID = agent.getId();
+            if (std::find(blockedAgents.begin(), blockedAgents.end(), agentID) == blockedAgents.end() ||
+                !agent.getOrderId().has_value()) {
                 continue;
             }
-            int agentID = agent.getId();
             Position position = agent.getPosition();
             int currentID = graph_.toNodeId(position.row, position.col);
-            bool needsDetour = false;
-            for (const Agent& otherAgent : agents_) {
-                if (otherAgent.getId() == agentID) {
-                    continue;
-                }
-                Position otherPosition = otherAgent.getPosition();
-                int otherCurrentID = graph_.toNodeId(otherPosition.row, otherPosition.col);
-                int otherNextID = proposedMoves.at(otherAgent.getId());
-                if (hasSwapConflict(currentID, proposedMoves.at(agentID),
-                                    otherCurrentID, otherNextID) ||
-                    (proposedMoves.at(agentID) == otherCurrentID && otherNextID == otherCurrentID)) {
-                    needsDetour = true;
-                    break;
-                }
-            }
-            if (!needsDetour) {
-                continue;
-            }
-
-            Grid detourGrid = grid_;
-            for (const Agent& otherAgent : agents_) {
-                Position occupied = otherAgent.getPosition();
-                detourGrid.setCellType(occupied.row, occupied.col, CellType::Shelf);
-            }
-            Graph detourGraph(detourGrid);
-
             for (const Order& order : orders_) {
                 if (order.getId() != agent.getOrderId().value()) {
                     continue;
@@ -913,6 +1154,9 @@ namespace warehouse_routing {
                     }
                 }
                 int goalID = graph_.toNodeId(goal.row, goal.col);
+                if (destinationAccess_.contains(goalID) && !canUseDestination(agentID, goalID)) {
+                    break;
+                }
                 std::vector<int> bestPath;
 
                 for (int neighbor : graph_.getNeighbors(currentID)) {
@@ -927,25 +1171,6 @@ namespace warehouse_routing {
                     if (!suitable) {
                         continue;
                     }
-                    for (const Agent& otherAgent : agents_) {
-                        if (otherAgent.getId() == agentID) {
-                            continue;
-                        }
-                        Position otherPosition = otherAgent.getPosition();
-                        int otherCurrentID = graph_.toNodeId(otherPosition.row, otherPosition.col);
-                        int otherNextID = proposedMoves.at(otherAgent.getId());
-                        if (neighbor == otherCurrentID ||
-                            hasVertexConflict(neighbor, otherNextID) ||
-                            hasSwapConflict(currentID, neighbor, otherCurrentID, otherNextID) ||
-                            hasDiagonalConflict(graph_, currentID, neighbor, otherCurrentID, otherNextID)) {
-                            suitable = false;
-                            break;
-                        }
-                    }
-                    if (!suitable) {
-                        continue;
-                    }
-
                     std::vector<int> detour = aStar(detourGraph, neighbor, goalID);
                     if (detour.empty()) {
                         continue;
@@ -965,13 +1190,12 @@ namespace warehouse_routing {
                     }
                 }
                 if (!bestPath.empty()) {
-                    paths_[agentID] = bestPath;
-                    pathProgress_[agentID] = 0;
-                    proposedMoves[agentID] = bestPath.at(1);
+                    detours[agentID] = std::move(bestPath);
                 }
                 break;
             }
         }
+        return detours;
     }
 
     void Simulation::resolveConflicts(std::unordered_map<int, int>& proposedMoves) {

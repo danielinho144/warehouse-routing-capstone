@@ -35,6 +35,12 @@ int main(int argc, char* argv[]) {
         Simulation sim(scenario, planner);
         nlohmann::json replay;
 
+        if (planner == PlannerType::CBS) {
+            replay["planner"] = "cbs";
+        } else {
+            replay["planner"] = "baseline";
+        }
+
         Grid grid = loadMap(scenario.mapPath);
         replay["map"]["rows"] = grid.getRows();
         replay["map"]["cols"] = grid.getCols();

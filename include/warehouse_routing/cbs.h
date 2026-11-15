@@ -9,5 +9,5 @@ namespace warehouse_routing {
     std::optional<std::unordered_map<int, std::vector<int>>> planCBSPaths(
         const Graph& graph, 
         const std::vector<Agent>& agents, const std::unordered_map<int, int>& goals,
-        int maxTick, int maxExpandedNodes);
+        int maxTick, int maxExpandedNodes, bool* hitExpansionLimit = nullptr);
 }

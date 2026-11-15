@@ -129,6 +129,63 @@ TEST(DestinationAccessTest, CBSWaiterUsesCurrentNodeAndTaskGoalsStayUnchanged) {
     EXPECT_EQ(taskGoals, originalGoals);
 }
 
+TEST(DestinationAccessTest, CBSWaitingAgentClearsEntranceForPickupOwner) {
+    Scenario reference;
+    reference.mapPath = MAP_TEST_DATA_DIR "/two_entrance_pickup.map";
+    Position pickup{2, 3};
+    reference.agents = {
+        Agent(1, Position{1, 0}, 1),
+        Agent(2, Position{1, 3}, 1),
+        Agent(3, Position{3, 3}, 1)
+    };
+    reference.orders = {
+        Order(10, {{"SKU_A", 1}}, Position{0, 0}),
+        Order(20, {{"SKU_A", 1}}, Position{0, 0}),
+        Order(30, {{"SKU_A", 1}}, Position{0, 0})
+    };
+    reference.inventory = {InventoryCell("SKU_A", 3, Position{2, 2}, pickup)};
+    Simulation sim(reference, PlannerType::CBS);
+    int destination = DestinationAccessTestAccess::node(sim, pickup);
+    int upperEntrance = DestinationAccessTestAccess::node(sim, Position{1, 3});
+    int lowerEntrance = DestinationAccessTestAccess::node(sim, Position{3, 3});
+
+    sim.step();
+
+    ASSERT_EQ(DestinationAccessTestAccess::owner(sim, destination), std::optional<int>{1});
+    ASSERT_EQ(DestinationAccessTestAccess::waiting(sim, destination), (std::deque<int>{2, 3}));
+    const auto& paths = DestinationAccessTestAccess::paths(sim);
+    bool hasStepAsideGoal = false;
+    for (int agentID : {2, 3}) {
+        const auto& path = paths.at(agentID);
+        ASSERT_FALSE(path.empty());
+        if (path.back() != upperEntrance && path.back() != lowerEntrance) {
+            EXPECT_NE(path.back(), destination);
+            hasStepAsideGoal = true;
+        }
+    }
+    EXPECT_TRUE(hasStepAsideGoal);
+
+    const Agent& owner = sim.getAgents().at(0);
+    bool steppedAside = false;
+    for (int tick = 1; tick <= 12; tick++) {
+        for (int i : {1, 2}) {
+            int node = DestinationAccessTestAccess::node(sim, sim.getAgents().at(i).getPosition());
+            ASSERT_NE(node, destination);
+            if (node != upperEntrance && node != lowerEntrance) {
+                steppedAside = true;
+            }
+        }
+        if (owner.getStatus() == AgentStatus::Delivering || tick == 12) {
+            break;
+        }
+        sim.step();
+    }
+    EXPECT_TRUE(steppedAside);
+    EXPECT_EQ(DestinationAccessTestAccess::node(sim, owner.getPosition()), destination);
+    EXPECT_EQ(owner.getStatus(), AgentStatus::Delivering);
+    EXPECT_EQ(owner.getCurrentLoad(), 1);
+}
+
 TEST(DestinationAccessTest, RepeatedUpdatesKeepOwnerAndDoNotDuplicateWaiters) {
     Scenario reference = makeAccessScenario();
     Simulation sim(reference);
@@ -424,6 +481,49 @@ TEST(DestinationAccessTest, WaitingAgentLeavesPickupOpenForOwner) {
     ASSERT_EQ(waiter.getId(), 2);
     EXPECT_NE(DestinationAccessTestAccess::node(sim, waiter.getPosition()), destination);
 }
+
+class BaselinePickupQueueTest : public ::testing::TestWithParam<int> {};
+
+TEST_P(BaselinePickupQueueTest, OwnerReachesPickupWhileWaitingAgentsStayOut) {
+    int waitingCount = GetParam();
+    Scenario reference;
+    reference.mapPath = MAP_TEST_DATA_DIR "/pickup_queue.map";
+    Position pickup{2, 5};
+    std::deque<int> expectedWaiting;
+    for (int i = 0; i <= waitingCount; i++) {
+        int agentID = i + 1;
+        reference.agents.emplace_back(agentID, Position{1, 5 - waitingCount + i}, 1);
+        reference.orders.push_back(Order(agentID, {{"SKU_A", 1}}, Position{3, 6}));
+        if (i > 0) {
+            expectedWaiting.push_back(agentID);
+        }
+    }
+    reference.inventory = {InventoryCell("SKU_A", waitingCount + 1, Position{2, 4}, pickup)};
+    Simulation sim(reference, PlannerType::Baseline);
+    int destination = DestinationAccessTestAccess::node(sim, pickup);
+
+    const Agent& owner = sim.getAgents().at(0);
+    for (int tick = 0; tick < 20; tick++) {
+        sim.step();
+        if (tick == 0) {
+            ASSERT_EQ(DestinationAccessTestAccess::owner(sim, destination), std::optional<int>{1});
+            ASSERT_EQ(DestinationAccessTestAccess::waiting(sim, destination), expectedWaiting);
+        }
+        for (int i = 1; i <= waitingCount; i++) {
+            Position position = sim.getAgents().at(i).getPosition();
+            ASSERT_NE(DestinationAccessTestAccess::node(sim, position), destination);
+        }
+        if (owner.getStatus() == AgentStatus::Delivering) {
+            break;
+        }
+    }
+
+    EXPECT_EQ(DestinationAccessTestAccess::node(sim, owner.getPosition()), destination);
+    EXPECT_EQ(owner.getStatus(), AgentStatus::Delivering);
+    EXPECT_EQ(owner.getCurrentLoad(), 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(WaitingAgents, BaselinePickupQueueTest, ::testing::Values(1, 2, 3));
 
 TEST(DestinationAccessTest, WaitingAgentPicksUpAfterOwnerLeaves) {
     Scenario reference;
