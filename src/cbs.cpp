@@ -25,7 +25,10 @@ namespace warehouse_routing {
     std::optional<std::unordered_map<int, std::vector<int>>> planCBSPaths(
         const Graph& graph, const std::vector<Agent>& agents, 
         const std::unordered_map<int, int>& goals, int maxTick,
-        int maxExpandedNodes) {
+        int maxExpandedNodes, bool* hitExpansionLimit) {
+            if (hitExpansionLimit != nullptr) {
+                *hitExpansionLimit = false;
+            }
             if (maxTick < 0) {
                 throw std::invalid_argument("maxTick must be non-negative");
             }
@@ -82,6 +85,9 @@ namespace warehouse_routing {
             int expandedNodes = 0;
             while (!openNodes.empty()) {
                 if (expandedNodes >= maxExpandedNodes) {
+                    if (hitExpansionLimit != nullptr) {
+                        *hitExpansionLimit = true;
+                    }
                     return std::nullopt;
                 }
                 CBSQueueEntry currentEntry;

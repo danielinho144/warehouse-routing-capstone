@@ -4,8 +4,9 @@
 #include <deque>
 #include <optional>
 #include <unordered_map>
+#include <utility>
 #include <vector>
-
+#include <set>
 #include "warehouse_routing/graph.h"
 #include "warehouse_routing/grid.h"
 #include "warehouse_routing/inventory.h"
@@ -74,7 +75,17 @@ namespace warehouse_routing {
         void markDestinationClearing(int agentID, int destinationID);
 
         //plan and execute coordinated CBS routes
-        std::unordered_map<int, int> buildCBSGoals(const std::unordered_map<int, int>& taskGoals) const;
+        struct StepAsideGoal {
+            int blockerID;
+            int blockerTaskGoal;
+            int ownerID;
+            int pickupNode;
+            int spot;
+        };
+        std::optional<StepAsideGoal> acceptedBackup_;
+        std::unordered_map<int, int> buildCBSGoals(const std::unordered_map<int, int>& taskGoals,
+        std::optional<StepAsideGoal>* backup = nullptr) const;
+        std::set<int> reachableNodes(int startNode, const std::set<int>& blockedNodes) const;
         bool tryPlanCBSRoutes(const std::unordered_map<int, int>& taskGoals, int maxTick, int maxExpandedNodes);
         void executeCBSTick();
 
@@ -82,7 +93,8 @@ namespace warehouse_routing {
         void clearDeliveryCells();
         void moveAgents();
         std::unordered_map<int, int> proposeMoves() const;
-        void attemptDetours(std::unordered_map<int, int>& proposedMoves);
+        void applyDestinationPermissions(std::unordered_map<int, int>& proposedMoves) const;
+        std::unordered_map<int, std::vector<int>> planDetours(const std::vector<int>& blockedAgents) const;
         void resolveConflicts(std::unordered_map<int, int>& proposedMoves);
         void executeMoves(const std::unordered_map<int, int>& proposedMoves);
     };

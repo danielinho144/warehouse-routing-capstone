@@ -1,0 +1,6 @@
+Progress: tick 100/5000 | Completed orders: 0/20
+Progress: tick 200/5000 | Completed orders: 1/20
+Progress: tick 300/5000 | Completed orders: 1/20
+Progress: tick 400/5000 | Completed orders: 2/20
+Progress: tick 500/5000 | Completed orders: 2/20
+Error: CBS could not find routes within the search limits

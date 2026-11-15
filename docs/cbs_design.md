@@ -33,7 +33,7 @@ As of November 8, 2026, CBS is connected to the warehouse simulation. All 284 te
 - Agent IDs must be unique and every agent must have a goal. Start coordinates must be in bounds, and start and goal nodes must exist in the graph.
 - Invalid input throws std::invalid_argument.
 - Success returns an optional containing paths by agent ID. No agents returns a successful empty map.
-- std::nullopt means no plan was returned within the search limits. It does not distinguish exhausted search from a limit being reached.
+- std::nullopt means no plan was returned within the search limits. Callers can pass the optional `hitExpansionLimit` flag to identify when the high-level expansion budget is reached.
 
 ## Time and Movement Rules
 
@@ -137,12 +137,10 @@ The sketches are in [Hand-Worked Examples.pdf](<Hand-Worked Examples.pdf>).
 
 ## Search Limits
 
-- The simulation sets `maxTick` to 20 for each CBS search. Each agent has up to 20 moves or waits to reach its current goal. The simulation clock continues across searches.
-- The simulation also sets `maxExpandedNodes` to 100. If CBS returns no plan within the limits, `Simulation::step()` throws a runtime error. The solver result does not identify which limit or search condition caused the failure.
-- The search-limit test places a pickup 21 moves from the start on an open aisle. The first step raises the expected error with the agent still at its start and the simulation clock at 0.
+- Week 9 runs use a 150-tick planning horizon per agent and up to 200 high-level CBS expansions per attempt. Each new plan starts at planning tick 0. The simulation run limit is 5,000 ticks.
+- If the first search hits the expansion limit and a backup step-aside goal is available, the simulation can retry once with that goal. If planning still fails, the step throws a search-limit error.
+- The search-limit test puts a pickup 151 moves away. The first step raises the error before the agent moves.
 
-## Week 9 Comparison Work
+## Week 9 Comparison
 
-Run the five multi-item scenarios with the same inputs and simulation tick limit for both planners. Record completed orders, ticks, throughput, and search-limit failures.
-
-The [multi-item baseline](multi_item_baseline_results.md) completed all 20 orders with 2–8 agents. The 10-agent run completed 8 orders and stopped moving after tick 384 before reaching the 5,000-tick limit. This apparent pickup-aisle congestion deadlock remains a baseline result for comparison, not a guarantee that CBS will resolve it.
+Both planners ran the same five 20-order workloads on one build. The results include finished runs, baseline runs that reached the tick limit, and the 10-agent CBS search failure. [Week 9 comparison and failure trace summary](../results/week9/README.md)

@@ -419,13 +419,52 @@ TEST(SimulationTest, TwoCBSAgentsCompleteOrdersAtSharedPickupCell) {
     EXPECT_TRUE(sim.isFinished());
 }
 
-TEST(SimulationTest, CBSStepThrowsWhenPickupExceedsMaxTick) {
+TEST(SimulationTest, ActiveCBSAgentsClearEachOthersDestinations) {
     const std::string directory = SCENARIO_DATA_DIR;
     Scenario reference = loadScenario(directory + "/test_scenario_inventory.json");
+    Position delivery{1, 3};
+    Position pickup{1, 7};
+    reference.agents = {
+        Agent(0, Position{1, 1}, 1),
+        Agent(1, Position{1, 9}, 1)
+    };
+    reference.orders = {
+        Order(0, {{"SKU_A", 1}, {"SKU_B", 1}}, delivery),
+        Order(1, {{"SKU_B", 1}}, delivery)
+    };
+    reference.inventory = {
+        InventoryCell("SKU_A", 1, Position{0, 2}, Position{1, 2}),
+        InventoryCell("SKU_B", 2, Position{0, 7}, pickup)
+    };
+    Simulation sim(reference, PlannerType::CBS);
+
+    sim.step();
+    sim.step();
+
+    const Agent& first = sim.getAgents().at(0);
+    const Agent& second = sim.getAgents().at(1);
+    ASSERT_EQ(first.getPosition().row, delivery.row);
+    ASSERT_EQ(first.getPosition().col, delivery.col);
+    ASSERT_EQ(first.getStatus(), AgentStatus::PickupPending);
+    ASSERT_EQ(second.getPosition().row, pickup.row);
+    ASSERT_EQ(second.getPosition().col, pickup.col);
+    ASSERT_EQ(second.getStatus(), AgentStatus::Delivering);
+
+    sim.run(30);
+
+    EXPECT_EQ(sim.getOrders().at(0).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getOrders().at(1).getStatus(), OrderStatus::Completed);
+    EXPECT_EQ(sim.getCompletedOrderCount(), 2);
+    EXPECT_TRUE(sim.isFinished());
+}
+
+TEST(SimulationTest, CBSStepThrowsWhenPickupExceedsMaxTick) {
+    Scenario reference;
+    reference.mapPath = MAP_TEST_DATA_DIR "/long_pickup_aisle.map";
     reference.agents = {Agent(0, Position{1, 1}, 5)};
     reference.orders = {Order(0, {{"SKU_A", 1}}, Position{1, 2})};
     reference.inventory = {
-        InventoryCell("SKU_A", 1, Position{0, 22}, Position{1, 22})
+        InventoryCell("SKU_A", 1, Position{0, 152}, Position{1, 152})
     };
     Simulation sim(reference, PlannerType::CBS);
 
