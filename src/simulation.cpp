@@ -537,7 +537,7 @@ namespace warehouse_routing {
             }
 
             const int maxTick = 150;
-            const int maxExpandedNodes = 200;
+            const int maxExpandedNodes = 1000;
             if (!tryPlanCBSRoutes(taskGoals, maxTick, maxExpandedNodes)) {
                 throw std::runtime_error("CBS could not find routes within the search limits");
             }

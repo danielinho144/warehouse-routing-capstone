@@ -1,0 +1,23 @@
+Progress: tick 100/5000 | Completed orders: 0/20
+Progress: tick 200/5000 | Completed orders: 0/20
+Progress: tick 300/5000 | Completed orders: 3/20
+Progress: tick 400/5000 | Completed orders: 6/20
+Progress: tick 500/5000 | Completed orders: 8/20
+Progress: tick 600/5000 | Completed orders: 10/20
+Progress: tick 700/5000 | Completed orders: 16/20
+Progress: tick 800/5000 | Completed orders: 19/20
+Ticks: 867
+Completed orders: 20
+Unfinished orders: 0
+Active orders: 0
+Throughput: 0.0230681 orders/tick
+Run finished: true
+All orders completed: true
+Agent 0: (5, 5)
+Agent 1: (3, 155)
+Agent 2: (55, 154)
+Agent 3: (3, 5)
+Agent 4: (3, 4)
+Agent 5: (55, 4)
+Agent 6: (55, 5)
+Agent 7: (55, 155)

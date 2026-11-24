@@ -1,0 +1,657 @@
+{
+  "map_path": "../warehouses/warehouse-10-20-10-2-1.map",
+  "agents": [
+    {
+      "id": 0,
+      "start": {
+        "row": 1,
+        "col": 1
+      },
+      "capacity": 5
+    },
+    {
+      "id": 1,
+      "start": {
+        "row": 1,
+        "col": 2
+      },
+      "capacity": 5
+    },
+    {
+      "id": 2,
+      "start": {
+        "row": 1,
+        "col": 3
+      },
+      "capacity": 5
+    },
+    {
+      "id": 3,
+      "start": {
+        "row": 1,
+        "col": 4
+      },
+      "capacity": 5
+    },
+    {
+      "id": 4,
+      "start": {
+        "row": 1,
+        "col": 5
+      },
+      "capacity": 5
+    },
+    {
+      "id": 5,
+      "start": {
+        "row": 1,
+        "col": 6
+      },
+      "capacity": 5
+    }
+  ],
+  "inventory": [
+    {
+      "item_id": "SKU_A",
+      "quantity": 10,
+      "shelf": {
+        "row": 5,
+        "col": 35
+      },
+      "pickup": {
+        "row": 5,
+        "col": 36
+      }
+    },
+    {
+      "item_id": "SKU_B",
+      "quantity": 10,
+      "shelf": {
+        "row": 5,
+        "col": 57
+      },
+      "pickup": {
+        "row": 5,
+        "col": 58
+      }
+    },
+    {
+      "item_id": "SKU_C",
+      "quantity": 10,
+      "shelf": {
+        "row": 5,
+        "col": 79
+      },
+      "pickup": {
+        "row": 5,
+        "col": 80
+      }
+    },
+    {
+      "item_id": "SKU_D",
+      "quantity": 10,
+      "shelf": {
+        "row": 5,
+        "col": 101
+      },
+      "pickup": {
+        "row": 5,
+        "col": 102
+      }
+    },
+    {
+      "item_id": "SKU_E",
+      "quantity": 10,
+      "shelf": {
+        "row": 5,
+        "col": 123
+      },
+      "pickup": {
+        "row": 5,
+        "col": 124
+      }
+    },
+    {
+      "item_id": "SKU_A",
+      "quantity": 10,
+      "shelf": {
+        "row": 20,
+        "col": 35
+      },
+      "pickup": {
+        "row": 20,
+        "col": 36
+      }
+    },
+    {
+      "item_id": "SKU_B",
+      "quantity": 10,
+      "shelf": {
+        "row": 20,
+        "col": 57
+      },
+      "pickup": {
+        "row": 20,
+        "col": 58
+      }
+    },
+    {
+      "item_id": "SKU_C",
+      "quantity": 10,
+      "shelf": {
+        "row": 20,
+        "col": 79
+      },
+      "pickup": {
+        "row": 20,
+        "col": 80
+      }
+    },
+    {
+      "item_id": "SKU_D",
+      "quantity": 10,
+      "shelf": {
+        "row": 20,
+        "col": 101
+      },
+      "pickup": {
+        "row": 20,
+        "col": 102
+      }
+    },
+    {
+      "item_id": "SKU_E",
+      "quantity": 10,
+      "shelf": {
+        "row": 20,
+        "col": 123
+      },
+      "pickup": {
+        "row": 20,
+        "col": 124
+      }
+    },
+    {
+      "item_id": "SKU_A",
+      "quantity": 10,
+      "shelf": {
+        "row": 35,
+        "col": 35
+      },
+      "pickup": {
+        "row": 35,
+        "col": 36
+      }
+    },
+    {
+      "item_id": "SKU_B",
+      "quantity": 10,
+      "shelf": {
+        "row": 35,
+        "col": 57
+      },
+      "pickup": {
+        "row": 35,
+        "col": 58
+      }
+    },
+    {
+      "item_id": "SKU_C",
+      "quantity": 10,
+      "shelf": {
+        "row": 35,
+        "col": 79
+      },
+      "pickup": {
+        "row": 35,
+        "col": 80
+      }
+    },
+    {
+      "item_id": "SKU_D",
+      "quantity": 10,
+      "shelf": {
+        "row": 35,
+        "col": 101
+      },
+      "pickup": {
+        "row": 35,
+        "col": 102
+      }
+    },
+    {
+      "item_id": "SKU_E",
+      "quantity": 10,
+      "shelf": {
+        "row": 35,
+        "col": 123
+      },
+      "pickup": {
+        "row": 35,
+        "col": 124
+      }
+    },
+    {
+      "item_id": "SKU_A",
+      "quantity": 10,
+      "shelf": {
+        "row": 50,
+        "col": 35
+      },
+      "pickup": {
+        "row": 50,
+        "col": 36
+      }
+    },
+    {
+      "item_id": "SKU_B",
+      "quantity": 10,
+      "shelf": {
+        "row": 50,
+        "col": 57
+      },
+      "pickup": {
+        "row": 50,
+        "col": 58
+      }
+    },
+    {
+      "item_id": "SKU_C",
+      "quantity": 10,
+      "shelf": {
+        "row": 50,
+        "col": 79
+      },
+      "pickup": {
+        "row": 50,
+        "col": 80
+      }
+    },
+    {
+      "item_id": "SKU_D",
+      "quantity": 10,
+      "shelf": {
+        "row": 50,
+        "col": 101
+      },
+      "pickup": {
+        "row": 50,
+        "col": 102
+      }
+    },
+    {
+      "item_id": "SKU_E",
+      "quantity": 10,
+      "shelf": {
+        "row": 50,
+        "col": 123
+      },
+      "pickup": {
+        "row": 50,
+        "col": 124
+      }
+    }
+  ],
+  "orders": [
+    {
+      "id": 0,
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_B",
+          "quantity": 2
+        },
+        {
+          "item_id": "SKU_C",
+          "quantity": 1
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 5
+      }
+    },
+    {
+      "id": 1,
+      "lines": [
+        {
+          "item_id": "SKU_B",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_C",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 155
+      }
+    },
+    {
+      "id": 2,
+      "lines": [
+        {
+          "item_id": "SKU_C",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_D",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 5
+      }
+    },
+    {
+      "id": 3,
+      "lines": [
+        {
+          "item_id": "SKU_D",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_E",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 155
+      }
+    },
+    {
+      "id": 4,
+      "lines": [
+        {
+          "item_id": "SKU_E",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_A",
+          "quantity": 2
+        },
+        {
+          "item_id": "SKU_B",
+          "quantity": 1
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 5
+      }
+    },
+    {
+      "id": 5,
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_B",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 155
+      }
+    },
+    {
+      "id": 6,
+      "lines": [
+        {
+          "item_id": "SKU_B",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_C",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 5
+      }
+    },
+    {
+      "id": 7,
+      "lines": [
+        {
+          "item_id": "SKU_C",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_D",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 155
+      }
+    },
+    {
+      "id": 8,
+      "lines": [
+        {
+          "item_id": "SKU_D",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_E",
+          "quantity": 2
+        },
+        {
+          "item_id": "SKU_A",
+          "quantity": 1
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 5
+      }
+    },
+    {
+      "id": 9,
+      "lines": [
+        {
+          "item_id": "SKU_E",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_A",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 155
+      }
+    },
+    {
+      "id": 10,
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_B",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 5
+      }
+    },
+    {
+      "id": 11,
+      "lines": [
+        {
+          "item_id": "SKU_B",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_C",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 155
+      }
+    },
+    {
+      "id": 12,
+      "lines": [
+        {
+          "item_id": "SKU_C",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_D",
+          "quantity": 2
+        },
+        {
+          "item_id": "SKU_E",
+          "quantity": 1
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 5
+      }
+    },
+    {
+      "id": 13,
+      "lines": [
+        {
+          "item_id": "SKU_D",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_E",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 155
+      }
+    },
+    {
+      "id": 14,
+      "lines": [
+        {
+          "item_id": "SKU_E",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_A",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 5
+      }
+    },
+    {
+      "id": 15,
+      "lines": [
+        {
+          "item_id": "SKU_A",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_B",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 155
+      }
+    },
+    {
+      "id": 16,
+      "lines": [
+        {
+          "item_id": "SKU_B",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_C",
+          "quantity": 2
+        },
+        {
+          "item_id": "SKU_D",
+          "quantity": 1
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 5
+      }
+    },
+    {
+      "id": 17,
+      "lines": [
+        {
+          "item_id": "SKU_C",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_D",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 5,
+        "col": 155
+      }
+    },
+    {
+      "id": 18,
+      "lines": [
+        {
+          "item_id": "SKU_D",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_E",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 5
+      }
+    },
+    {
+      "id": 19,
+      "lines": [
+        {
+          "item_id": "SKU_E",
+          "quantity": 3
+        },
+        {
+          "item_id": "SKU_A",
+          "quantity": 2
+        }
+      ],
+      "delivery": {
+        "row": 57,
+        "col": 155
+      }
+    }
+  ]
+}
