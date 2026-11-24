@@ -1,0 +1,157 @@
+Progress: tick 100/5000 | Completed orders: 0/1000
+Progress: tick 200/5000 | Completed orders: 2/1000
+Progress: tick 300/5000 | Completed orders: 4/1000
+Progress: tick 400/5000 | Completed orders: 4/1000
+Progress: tick 500/5000 | Completed orders: 4/1000
+Progress: tick 600/5000 | Completed orders: 4/1000
+Progress: tick 700/5000 | Completed orders: 4/1000
+Progress: tick 800/5000 | Completed orders: 4/1000
+Progress: tick 900/5000 | Completed orders: 4/1000
+Progress: tick 1000/5000 | Completed orders: 4/1000
+Progress: tick 1100/5000 | Completed orders: 4/1000
+Progress: tick 1200/5000 | Completed orders: 4/1000
+Progress: tick 1300/5000 | Completed orders: 4/1000
+Progress: tick 1400/5000 | Completed orders: 4/1000
+Progress: tick 1500/5000 | Completed orders: 4/1000
+Progress: tick 1600/5000 | Completed orders: 4/1000
+Progress: tick 1700/5000 | Completed orders: 4/1000
+Progress: tick 1800/5000 | Completed orders: 4/1000
+Progress: tick 1900/5000 | Completed orders: 4/1000
+Progress: tick 2000/5000 | Completed orders: 4/1000
+Progress: tick 2100/5000 | Completed orders: 4/1000
+Progress: tick 2200/5000 | Completed orders: 4/1000
+Progress: tick 2300/5000 | Completed orders: 4/1000
+Progress: tick 2400/5000 | Completed orders: 4/1000
+Progress: tick 2500/5000 | Completed orders: 4/1000
+Progress: tick 2600/5000 | Completed orders: 4/1000
+Progress: tick 2700/5000 | Completed orders: 4/1000
+Progress: tick 2800/5000 | Completed orders: 4/1000
+Progress: tick 2900/5000 | Completed orders: 4/1000
+Progress: tick 3000/5000 | Completed orders: 4/1000
+Progress: tick 3100/5000 | Completed orders: 4/1000
+Progress: tick 3200/5000 | Completed orders: 4/1000
+Progress: tick 3300/5000 | Completed orders: 4/1000
+Progress: tick 3400/5000 | Completed orders: 4/1000
+Progress: tick 3500/5000 | Completed orders: 4/1000
+Progress: tick 3600/5000 | Completed orders: 4/1000
+Progress: tick 3700/5000 | Completed orders: 4/1000
+Progress: tick 3800/5000 | Completed orders: 4/1000
+Progress: tick 3900/5000 | Completed orders: 4/1000
+Progress: tick 4000/5000 | Completed orders: 4/1000
+Progress: tick 4100/5000 | Completed orders: 4/1000
+Progress: tick 4200/5000 | Completed orders: 4/1000
+Progress: tick 4300/5000 | Completed orders: 4/1000
+Progress: tick 4400/5000 | Completed orders: 4/1000
+Progress: tick 4500/5000 | Completed orders: 4/1000
+Progress: tick 4600/5000 | Completed orders: 4/1000
+Progress: tick 4700/5000 | Completed orders: 4/1000
+Progress: tick 4800/5000 | Completed orders: 4/1000
+Progress: tick 4900/5000 | Completed orders: 4/1000
+Progress: tick 5000/5000 | Completed orders: 4/1000
+Ticks: 5000
+Completed orders: 4
+Unfinished orders: 0
+Active orders: 996
+Throughput: 0.0008 orders/tick
+Run finished: false
+All orders completed: false
+Agent 0: (4, 34)
+Agent 1: (7, 81)
+Agent 2: (19, 34)
+Agent 3: (34, 90)
+Agent 4: (4, 35)
+Agent 5: (4, 113)
+Agent 6: (34, 35)
+Agent 7: (34, 91)
+Agent 8: (4, 36)
+Agent 9: (4, 114)
+Agent 10: (34, 36)
+Agent 11: (4, 126)
+Agent 12: (4, 79)
+Agent 13: (4, 115)
+Agent 14: (34, 79)
+Agent 15: (34, 125)
+Agent 16: (4, 80)
+Agent 17: (5, 124)
+Agent 18: (34, 80)
+Agent 19: (19, 126)
+Agent 20: (4, 33)
+Agent 21: (7, 80)
+Agent 22: (34, 33)
+Agent 23: (37, 80)
+Agent 24: (7, 36)
+Agent 25: (4, 81)
+Agent 26: (37, 36)
+Agent 27: (34, 92)
+Agent 28: (6, 36)
+Agent 29: (6, 124)
+Agent 30: (36, 36)
+Agent 31: (36, 124)
+Agent 32: (4, 78)
+Agent 33: (7, 124)
+Agent 34: (34, 78)
+Agent 35: (37, 124)
+Agent 36: (6, 80)
+Agent 37: (4, 124)
+Agent 38: (36, 80)
+Agent 39: (34, 127)
+Agent 40: (4, 32)
+Agent 41: (18, 80)
+Agent 42: (34, 32)
+Agent 43: (48, 80)
+Agent 44: (19, 35)
+Agent 45: (19, 81)
+Agent 46: (49, 35)
+Agent 47: (49, 81)
+Agent 48: (19, 36)
+Agent 49: (19, 124)
+Agent 50: (49, 36)
+Agent 51: (4, 127)
+Agent 52: (19, 79)
+Agent 53: (19, 125)
+Agent 54: (49, 79)
+Agent 55: (49, 32)
+Agent 56: (19, 80)
+Agent 57: (4, 125)
+Agent 58: (49, 80)
+Agent 59: (34, 128)
+Agent 60: (19, 33)
+Agent 61: (22, 80)
+Agent 62: (49, 34)
+Agent 63: (52, 80)
+Agent 64: (22, 36)
+Agent 65: (19, 82)
+Agent 66: (52, 35)
+Agent 67: (49, 82)
+Agent 68: (21, 36)
+Agent 69: (21, 124)
+Agent 70: (51, 36)
+Agent 71: (4, 128)
+Agent 72: (19, 78)
+Agent 73: (22, 124)
+Agent 74: (49, 78)
+Agent 75: (48, 124)
+Agent 76: (21, 80)
+Agent 77: (19, 127)
+Agent 78: (51, 80)
+Agent 79: (49, 124)
+Agent 80: (19, 32)
+Agent 81: (32, 80)
+Agent 82: (49, 33)
+Agent 83: (54, 80)
+Agent 84: (34, 34)
+Agent 85: (34, 93)
+Agent 86: (52, 34)
+Agent 87: (49, 83)
+Agent 88: (33, 36)
+Agent 89: (34, 124)
+Agent 90: (52, 36)
+Agent 91: (51, 124)
+Agent 92: (34, 77)
+Agent 93: (34, 126)
+Agent 94: (49, 77)
+Agent 95: (52, 124)
+Agent 96: (33, 80)
+Agent 97: (19, 128)
+Agent 98: (53, 80)
+Agent 99: (49, 125)

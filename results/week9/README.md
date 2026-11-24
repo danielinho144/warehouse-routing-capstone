@@ -19,6 +19,16 @@ Compared independent A* (baseline) and Conflict-Based Search (CBS) on the same 2
 
 Baseline finished sooner with 2, 4, and 6 agents. With 8 agents, CBS finished all 20 orders and baseline reached the tick limit with 3 orders left.
 
+## Charts
+
+![Completed orders by agent count for baseline and CBS](charts/completed_orders.png)
+
+Each run had 20 orders and a 5,000-tick limit. Both planners completed every order with 2, 4, and 6 agents. With 8 agents, CBS completed all 20 while baseline completed 17. With 10 agents, baseline completed 3. The CBS search failure label marks missing final totals because the run stopped during planning.
+
+![Throughput by agent count for baseline and CBS](charts/throughput.png)
+
+Throughput is completed orders divided by elapsed simulation ticks. Finished runs use their completion tick. The 8- and 10-agent baseline runs use the full 5,000 ticks. Baseline had higher throughput with 2, 4, and 6 agents, while CBS had higher throughput with 8 agents. The 10-agent CBS run exited before reporting final throughput, so its value is missing.
+
 ## Why the 10-agent CBS run stopped
 
 The saved log last showed 0/20 orders at tick 200. The run exited with code 1 before printing final totals. [Same-build CBS log](comparison/10_agents/cbs/summary.txt)
